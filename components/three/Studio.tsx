@@ -47,7 +47,7 @@ export default function Studio({
         <color attach="background" args={[dark ? "#050506" : "#d9d8d4"]} />
         {/* ceiling light strips */}
         {[-6, -3, 0, 3, 6].map((z) => (
-          <Lightformer key={z} form="rect" intensity={dark ? 2.2 : 2.6} position={[0, 7, z]} rotation-x={Math.PI / 2} scale={[14, 0.7, 1]} />
+          <Lightformer key={z} form="rect" intensity={dark ? 1.6 : 2.2} position={[0, 7, z]} rotation-x={Math.PI / 2} scale={[14, 0.32, 1]} />
         ))}
         {/* big soft key */}
         <Lightformer form="rect" intensity={dark ? 3 : 3.5} position={[-9, 2.5, 1]} rotation-y={Math.PI / 2} scale={[18, 3.5, 1]} />

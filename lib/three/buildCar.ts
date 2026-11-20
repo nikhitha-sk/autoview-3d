@@ -22,10 +22,6 @@ const smoothstep = (a: number, b: number, v: number) => {
   const t = clamp((v - a) / (b - a));
   return t * t * (3 - 2 * t);
 };
-function smax(a: number, b: number, k: number) {
-  const h = clamp(0.5 + (0.5 * (a - b)) / k);
-  return lerp(b, a, h) + k * h * (1 - h);
-}
 
 /** Polyline with rounded corners (quadratic fillets), sampled densely. */
 function roundedChain(points: P[], samples = 500): THREE.Vector2[] {
@@ -84,6 +80,11 @@ interface SectionParams {
   rTop: number;
   rBot: number;
   crown: number;
+  /** Outer band (|z| beyond `wellZ`) is remapped to span [bOuter, t + fender]:
+   *  this carves wheel wells only under the fenders and raises fender humps. */
+  wellZ?: number;
+  bOuter?: number;
+  fender?: number;
   /** maps (y, section) -> z scale factor (tumblehome) */
   taper: (y: number, b: number, t: number) => number;
 }
@@ -91,8 +92,8 @@ interface SectionParams {
 // Segment resolution of a rounded-rectangle ring.
 const SIDE = 5;
 const CORNER = 8;
-const TOP = 14;
-const BOTTOM = 6;
+const TOP = 24;
+const BOTTOM = 24;
 export const RING = 2 * SIDE + 4 * CORNER + TOP + BOTTOM;
 
 /** Rounded-rectangle cross-section in the (z, y) plane, CCW when viewed from +x. */
@@ -144,12 +145,29 @@ function ring(sp: SectionParams, out: [number, number][]) {
     push(sp.hw - rB + rB * Math.cos(a), sp.b + rB + rB * Math.sin(a));
   }
 
-  // crown (top surface curvature) + tumblehome
+  const mid = (sp.b + sp.t) / 2;
+  const bO = sp.bOuter ?? sp.b;
+  const fen = sp.fender ?? 0;
+  const tO = sp.t + fen;
+  const wellZ = sp.wellZ ?? sp.hw * 2;
+  const remap = bO > sp.b + 1e-4 || fen > 1e-4;
+
+  // crown (top surface curvature), outer well/fender remap, tumblehome
   for (const p of out) {
     const [z, y] = p;
     const topW = smoothstep(sp.t - rT - 0.001, sp.t, y);
     const zn = sp.hw > 0 ? z / sp.hw : 0;
-    const yy = y + sp.crown * topW * (1 - zn * zn);
+    let yy = y;
+    if (remap) {
+      const az = Math.abs(z);
+      // wide soft blend for the fender on top, tight blend for the wheel-well wall below
+      const w = y >= mid ? smoothstep(wellZ - 0.13, wellZ + 0.03, az) : smoothstep(wellZ - 0.015, wellZ + 0.015, az);
+      if (w > 0) {
+        const remapped = bO + ((y - sp.b) / Math.max(1e-4, sp.t - sp.b)) * (tO - bO);
+        yy = lerp(y, remapped, w);
+      }
+    }
+    yy += sp.crown * topW * (1 - zn * zn);
     p[0] = z * sp.taper(y, sp.b, sp.t);
     p[1] = yy;
   }
@@ -230,6 +248,8 @@ export interface CarBuild {
   /** wheel centres in car-local space; z sign tells the side */
   wheels: THREE.Vector3[];
   archR: number;
+  /** |z| where the wheel wells begin */
+  wellZ: number;
   bodyHalfWidthAt: Fn;
   topAt: Fn;
   bottomAt: Fn;
@@ -272,7 +292,7 @@ export function buildCar(s: ResolvedShape): CarBuild {
   // ---------- lower body profile ----------
   const noseRun = Math.max(0.05, s.noseRun * L);
   const noseTopY = s.noseY * H;
-  const noseMidY = Math.max(cl + 0.12, noseTopY - Math.max(noseRun, 0.06) * 1.25);
+  const noseMidY = Math.max(cl + 0.12, noseTopY - Math.max(noseRun, 0.06) * 0.9);
   const chinR = Math.min(0.28, 0.06 * L);
   const chinY = cl + (noseMidY - cl) * 0.32;
   const hoodY = s.hoodY * H;
@@ -294,28 +314,24 @@ export function buildCar(s: ResolvedShape): CarBuild {
   const topMid = toFunction(topChain);
 
   const wheelsX = [xFw, xRw];
-  const fenderNeed = (x: number) => {
-    let need = -Infinity;
-    for (const w of wheelsX) {
-      const d = Math.abs(x - w);
-      const fall = Math.max(0, d - aR * 0.75);
-      need = Math.max(need, archTop + 0.085 - fall * fall * 2.2);
-    }
-    return need;
-  };
 
   const topAt: Fn = (x) => {
     let t: number;
     if (x > x3) t = lerp(noseTopY, noseMidY, ellipseOut((x - x3) / (xF - x3)));
     else if (x < x6) t = lerp(deckY, tailMid, ellipseOut((x6 - x) / (x6 - xR)));
     else t = topMid(x);
-    return smax(t, fenderNeed(x), 0.06);
+    let lift = 0;
+    for (const w of wheelsX) {
+      const d = Math.abs(x - w);
+      const fall = smoothstep(aR + 1.2, aR * 0.4, d);
+      lift = Math.max(lift, Math.max(0, archTop - 0.035 - t) * fall);
+    }
+    return t + lift;
   };
 
-  const bottomAt: Fn = (x) => {
-    let b = cl;
-    if (x > xF - chinR) b = lerp(cl, chinY, ellipseOut((x - (xF - chinR)) / chinR));
-    if (x < xR + rearChinR) b = lerp(cl, rearChinY, ellipseOut((xR + rearChinR - x) / rearChinR));
+  /** Height of the wheel-arch opening at x (or -Infinity outside arches). */
+  const archBottom: Fn = (x) => {
+    let b = -Infinity;
     for (const w of wheelsX) {
       const d = Math.abs(x - w);
       if (d < aR) b = Math.max(b, R + Math.sqrt(aR * aR - d * d));
@@ -323,8 +339,27 @@ export function buildCar(s: ResolvedShape): CarBuild {
     return b;
   };
 
-  const rpF = clamp(s.noseRound * 1.7, 0.08, 0.55);
-  const rpR = clamp(s.tailRound * 1.7, 0.06, 0.5);
+  /** Fender hump needed over the wheels so the outer skin clears the arch. */
+  const fenderAt: Fn = (x) => {
+    let f = 0;
+    for (const w of wheelsX) {
+      const d = Math.abs(x - w);
+      const fall = smoothstep(aR + 1.05, aR * 0.55, d);
+      const need = archTop + 0.04 - topAt(x);
+      f = Math.max(f, Math.max(0, need) * fall + s.fenderFlare * fall);
+    }
+    return f;
+  };
+
+  const bottomAt: Fn = (x) => {
+    let b = cl;
+    if (x > xF - chinR) b = lerp(cl, chinY, ellipseOut((x - (xF - chinR)) / chinR));
+    if (x < xR + rearChinR) b = lerp(cl, rearChinY, ellipseOut((xR + rearChinR - x) / rearChinR));
+    return b;
+  };
+
+  const rpF = clamp(s.noseRound * 1.25, 0.06, 0.4);
+  const rpR = clamp(s.tailRound * 1.25, 0.05, 0.38);
   const hwAt: Fn = (x) => {
     let hw = W / 2;
     if (x > xF - rpF) hw -= rpF * ellipseOut((x - (xF - rpF)) / rpF);
@@ -334,20 +369,27 @@ export function buildCar(s: ResolvedShape): CarBuild {
 
   const bodyTaper = (y: number, b: number, t: number) => {
     const f = (y - b) / Math.max(1e-3, t - b);
-    const shoulder = smoothstep(0.55, 1.0, f) * (y > hoodY * 0.85 ? 1 : 0.6);
-    return 1 - 0.055 * shoulder - 0.035 * smoothstep(0.22, 0, f);
+    return 1 - 0.065 * smoothstep(0.55, 1.0, f) - 0.05 * smoothstep(0.3, 0, f);
   };
 
   const stations = makeStations(xR, xF, wheelsX.map((x) => ({ x, r: aR })));
-  const body = loft(stations, (x) => ({
-    hw: hwAt(x),
-    b: bottomAt(x),
-    t: topAt(x),
-    rTop: 0.16,
-    rBot: 0.06,
-    crown: 0.025,
-    taper: bodyTaper,
-  }));
+  const wellZ = W / 2 - s.tireW - 0.07;
+  const body = loft(stations, (x) => {
+    const b = bottomAt(x);
+    const ab = archBottom(x);
+    return {
+      hw: hwAt(x),
+      b,
+      t: topAt(x),
+      rTop: 0.16,
+      rBot: 0.06,
+      crown: 0.025,
+      wellZ,
+      bOuter: Math.max(b, ab),
+      fender: fenderAt(x),
+      taper: bodyTaper,
+    };
+  });
 
   // ---------- greenhouse (glass) ----------
   const glassChain = roundedChain([
@@ -378,26 +420,26 @@ export function buildCar(s: ResolvedShape): CarBuild {
   });
 
   // ---------- roof panel ----------
-  const roofInset = 0.1;
-  const rx0 = xRr + roofInset;
+  const roofInset = 0.06;
+  const rx0 = lerp(xRr, xC, s.roofExtend) + roofInset;
   const rx1 = xRf - roofInset;
   const rStations: number[] = [];
   const RN = 60;
   const rRound = 0.18;
   for (let i = 0; i <= RN; i++) rStations.push(lerp(rx0, rx1, (1 - Math.cos((Math.PI * i) / RN)) / 2));
-  const roofHwBase = ghw * glassTaper(H) - 0.05;
+  const roofHwBase = ghw * glassTaper(H) - 0.035;
   const roof = loft(rStations, (x) => {
-    const t = gTop(x) + 0.03 + 0.006;
+    const t = gTop(x) + 0.006;
     let hw = roofHwBase;
     if (x > rx1 - rRound) hw -= rRound * ellipseOut((x - (rx1 - rRound)) / rRound) * 0.6;
     if (x < rx0 + rRound) hw -= rRound * ellipseOut((rx0 + rRound - x) / rRound) * 0.6;
     return {
       hw,
-      b: t - 0.035,
+      b: t - 0.06,
       t,
-      rTop: 0.03,
+      rTop: 0.035,
       rBot: 0.005,
-      crown: 0.0,
+      crown: 0.03,
       taper: () => 1,
     };
   });
@@ -436,6 +478,7 @@ export function buildCar(s: ResolvedShape): CarBuild {
     roof,
     wheels,
     archR: aR,
+    wellZ,
     bodyHalfWidthAt: hwAt,
     topAt,
     bottomAt,

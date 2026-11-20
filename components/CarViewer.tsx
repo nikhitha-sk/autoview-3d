@@ -78,18 +78,11 @@ export default function CarViewer({
   distanceScale = 1,
   onInteract,
 }: CarViewerProps) {
-  const [q, setQ] = useState<Quality>("high");
-  const [dpr, setDpr] = useState<number>(1.5);
-
-  useEffect(() => {
-    if (quality !== "auto") {
-      setQ(quality);
-      return;
-    }
-    const coarse = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
-    setQ(coarse ? "low" : "high");
-    setDpr(coarse ? 1.25 : Math.min(window.devicePixelRatio, 1.75));
-  }, [quality]);
+  // This component only ever renders on the client (loaded with ssr: false).
+  const coarse = useMemo(() => window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768, []);
+  const [declined, setDeclined] = useState(false);
+  const q: Quality = declined ? "low" : quality !== "auto" ? quality : coarse ? "low" : "high";
+  const dpr = declined ? 1 : coarse ? 1.25 : Math.min(window.devicePixelRatio, 1.75);
 
   const L = car ? car.dimensions.length / 1000 : 4.4;
   const H = car ? car.dimensions.height / 1000 : 1.4;
@@ -108,12 +101,7 @@ export default function CarViewer({
         gl={{ antialias: true, alpha: bare, preserveDrawingBuffer: bare }}
         style={{ pointerEvents: interactive ? "auto" : "none" }}
       >
-        <PerformanceMonitor
-          onDecline={() => {
-            setDpr(1);
-            setQ("low");
-          }}
-        />
+        <PerformanceMonitor onDecline={() => setDeclined(true)} />
         <Suspense fallback={null}>
           {pano ? (
             <InteriorViewer url={pano} />
@@ -164,18 +152,21 @@ export default function CarViewer({
   );
 }
 
+function easeFov(camera: THREE.PerspectiveCamera, target: number, dt: number) {
+  if (Math.abs(camera.fov - target) < 0.05) return;
+  camera.fov = THREE.MathUtils.lerp(camera.fov, target, 1 - Math.exp(-dt * 5));
+  camera.updateProjectionMatrix();
+}
+
 function LoaderOverlay() {
   const { active, progress } = useProgress();
-  const [shown, setShown] = useState(true);
+  const [settled, setSettled] = useState(false);
   useEffect(() => {
-    if (active) {
-      setShown(true);
-      return;
-    }
-    const t = setTimeout(() => setShown(false), 450);
+    if (active) return;
+    const t = setTimeout(() => setSettled(true), 450);
     return () => clearTimeout(t);
   }, [active]);
-  if (!shown) return null;
+  if (settled && !active) return null;
   const pct = Math.round(active ? progress : 100);
   return (
     <div
@@ -272,7 +263,7 @@ function Rig({
       c.touches.two = ACTION.TOUCH_DOLLY;
       c.touches.three = ACTION.NONE;
     }
-  }, [mode, L, wheelZoom]);
+  }, [mode, L, wheelZoom, distanceScale]);
 
   // camera moves
   useEffect(() => {
@@ -320,14 +311,9 @@ function Rig({
     };
   }, [onInteract]);
 
-  const camera = useThree((st) => st.camera) as THREE.PerspectiveCamera;
-  useFrame((_, dt) => {
+  useFrame((state, dt) => {
     // telephoto outside (product-photo look), wide inside the cabin
-    const targetFov = mode === "exterior" ? 32 : 70;
-    if (Math.abs(camera.fov - targetFov) > 0.05) {
-      camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov, 1 - Math.exp(-dt * 5));
-      camera.updateProjectionMatrix();
-    }
+    easeFov(state.camera as THREE.PerspectiveCamera, mode === "exterior" ? 32 : 70, dt);
     const c = ref.current;
     if (!c || !autoRotate || mode !== "exterior" || busy.current) return;
     c.rotate(Math.min(dt, 0.05) * 0.16, 0, false);

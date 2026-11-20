@@ -75,7 +75,7 @@
       "url": "https://sketchfab.com/models/57bf6cc56931426e87494f554df1dab6",
       "license": "CC BY 4.0"
     },
-    "interiorCamera": { "position": [0.36, 0.98, -0.32], "target": [0.36, 0.9, 1.2] },
+    "interiorCamera": { "position": [0.34, 0.96, 0.02], "target": [0.34, 0.86, 1.5] },
     "thumbnail": "/cars/ferrari-458.webp",
     "shape": { "archetype": "supercar" },
     "tags": ["Icon", "Mid-engine", "Convertible", "Real model"]

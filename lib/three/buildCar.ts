@@ -23,31 +23,20 @@ const smoothstep = (a: number, b: number, v: number) => {
   return t * t * (3 - 2 * t);
 };
 
-/** Polyline with rounded corners (quadratic fillets), sampled densely. */
-function roundedChain(points: P[], samples = 500): THREE.Vector2[] {
-  const path = new THREE.Path();
-  path.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length - 1; i++) {
-    const a = points[i - 1];
-    const p = points[i];
-    const b = points[i + 1];
-    const v1 = new THREE.Vector2(a.x - p.x, a.y - p.y);
-    const v2 = new THREE.Vector2(b.x - p.x, b.y - p.y);
-    const l1 = v1.length();
-    const l2 = v2.length();
-    const r = Math.min(p.r ?? 0, l1 * 0.5, l2 * 0.5);
-    if (r <= 1e-4) {
-      path.lineTo(p.x, p.y);
-      continue;
-    }
-    const p1 = v1.normalize().multiplyScalar(r).add(new THREE.Vector2(p.x, p.y));
-    const p2 = v2.normalize().multiplyScalar(r).add(new THREE.Vector2(p.x, p.y));
-    path.lineTo(p1.x, p1.y);
-    path.quadraticCurveTo(p.x, p.y, p2.x, p2.y);
+/** Smooth (centripetal Catmull-Rom) curve through control points: continuous curvature, no kinks. */
+function smoothChain(points: P[], samples = 500): THREE.Vector2[] {
+  const clean: P[] = [];
+  for (const p of points) {
+    const last = clean[clean.length - 1];
+    if (!last || Math.hypot(p.x - last.x, p.y - last.y) > 0.03) clean.push(p);
   }
-  const last = points[points.length - 1];
-  path.lineTo(last.x, last.y);
-  return path.getSpacedPoints(samples);
+  if (clean.length < 2) return clean.map((p) => new THREE.Vector2(p.x, p.y));
+  const curve = new THREE.CatmullRomCurve3(
+    clean.map((p) => new THREE.Vector3(p.x, p.y, 0)),
+    false,
+    "centripetal",
+  );
+  return curve.getSpacedPoints(samples).map((v) => new THREE.Vector2(v.x, v.y));
 }
 
 /** Turn sampled points into y = f(x) via linear interpolation (upper envelope on ties). */
@@ -93,7 +82,7 @@ interface SectionParams {
 }
 
 // Segment resolution of a rounded-rectangle ring.
-const SIDE = 5;
+const SIDE = 10;
 const CORNER = 8;
 const TOP = 24;
 const BOTTOM = 24;
@@ -268,6 +257,25 @@ export interface CarBuild {
   chinY: number;
   tailMidY: number;
   deckY: number;
+  rearChinY: number;
+  /** greenhouse helpers for pillars & trims */
+  gi: GlassInfo;
+  /** y of the body skin hit from above at (x, z) */
+  surfaceY: (x: number, z: number) => number | null;
+  /** x-range of the cabin glass on the sides */
+  archBottom: Fn;
+}
+
+export interface GlassInfo {
+  xs: number[];
+  top: Fn;
+  /** outer glass point on the top corner at angle a (0 = side, π/2 = roof) */
+  corner: (x: number, a?: number) => { y: number; z: number };
+  /** outer glass half-width at height y */
+  sideZ: (y: number) => number;
+  /** y where the side glass meets the top corner */
+  cornerStartY: (x: number) => number;
+  roofHalfWidth: number;
 }
 
 /** Build stations: cosine-clustered at the ends, dense around the wheel arches. */
@@ -312,10 +320,14 @@ export function buildCar(s: ResolvedShape): CarBuild {
 
   const x3 = xF - noseRun;
   const x6 = xR + tailRun;
-  const topChain = roundedChain([
+  // hood rises convexly from the nose to the cowl; trunk lid crowns slightly
+  const topChain = smoothChain([
     { x: x3, y: noseTopY },
-    { x: xA, y: hoodY, r: 0.35 },
-    { x: xC, y: beltRear, r: 0.3 },
+    { x: lerp(x3, xA, 0.45), y: lerp(noseTopY, hoodY, 0.72) },
+    { x: xA, y: hoodY },
+    { x: lerp(xA, xC, 0.5), y: lerp(hoodY, beltRear, 0.5) + 0.006 },
+    { x: xC, y: beltRear },
+    { x: lerp(xC, x6, 0.5), y: lerp(beltRear, deckY, 0.5) + 0.012 },
     { x: x6, y: deckY },
   ]);
   const topMid = toFunction(topChain);
@@ -368,15 +380,25 @@ export function buildCar(s: ResolvedShape): CarBuild {
   const rpF = clamp(s.noseRound * 1.25, 0.06, 0.4);
   const rpR = clamp(s.tailRound * 1.25, 0.05, 0.38);
   const hwAt: Fn = (x) => {
-    let hw = W / 2;
+    // plan view: the body narrows toward the nose and tail instead of being a rectangle
+    const fT = Math.pow(smoothstep(xFw - 0.35, xF, x), 1.5);
+    const rT = Math.pow(smoothstep(xRw + 0.35, xR, x), 1.5);
+    let hw = (W / 2) * (1 - s.planTaper * fT - s.planTaper * 0.7 * rT);
     if (x > xF - rpF) hw -= rpF * ellipseOut((x - (xF - rpF)) / rpF);
     if (x < xR + rpR) hw -= rpR * ellipseOut((xR + rpR - x) / rpR);
     return hw;
   };
 
+  // barrel-shaped sides: widest a little below the middle, tumbling in to the shoulder and tucking under
   const bodyTaper = (y: number, b: number, t: number) => {
-    const f = (y - b) / Math.max(1e-3, t - b);
-    return 1 - 0.065 * smoothstep(0.55, 1.0, f) - 0.05 * smoothstep(0.3, 0, f);
+    const f = clamp((y - b) / Math.max(1e-3, t - b));
+    const fMax = 0.42;
+    if (f > fMax) {
+      const u = (f - fMax) / (1 - fMax);
+      return 1 - s.sideBulge * 0.9 * u * u;
+    }
+    const u = (fMax - f) / fMax;
+    return 1 - s.sideBulge * 0.75 * u * u;
   };
 
   const stations = makeStations(xR, xF, wheelsX.map((x) => ({ x, r: aR })));
@@ -395,9 +417,9 @@ export function buildCar(s: ResolvedShape): CarBuild {
       hw: hwAt(x),
       b,
       t: topAt(x),
-      rTop: 0.16,
-      rBot: 0.06,
-      crown: 0.025,
+      rTop: s.bodyRound,
+      rBot: 0.07,
+      crown: 0.03,
       wellZ,
       bOuter: Math.max(b, ab),
       fender: fenderAt(x),
@@ -406,10 +428,14 @@ export function buildCar(s: ResolvedShape): CarBuild {
   });
 
   // ---------- greenhouse (glass) ----------
-  const glassChain = roundedChain([
+  const arch = s.roofArch;
+  const glassChain = smoothChain([
     { x: xC, y: beltRear - 0.02 },
-    { x: xRr, y: H, r: s.roofRound * 0.9 },
-    { x: xRf, y: H, r: s.roofRound },
+    { x: lerp(xC, xRr, 0.5), y: lerp(beltRear, H - arch, 0.5) + 0.03 },
+    { x: xRr, y: H - arch },
+    { x: (xRf + xRr) / 2, y: H },
+    { x: xRf, y: H - arch * 0.8 },
+    { x: lerp(xA, xRf, 0.55), y: lerp(hoodY, H - arch, 0.55) + 0.03 },
     { x: xA, y: hoodY - 0.02 },
   ]);
   const gTop = toFunction(glassChain);
@@ -419,14 +445,19 @@ export function buildCar(s: ResolvedShape): CarBuild {
   const gStations: number[] = [];
   const GN = 120;
   for (let i = 0; i <= GN; i++) gStations.push(lerp(xC + 0.005, xA - 0.005, (1 - Math.cos((Math.PI * i) / GN)) / 2));
-  const glass = loft(gStations, (x) => {
+  const gR = clamp(s.bodyRound * 0.55 + 0.05, 0.06, 0.2);
+  const glassSec = (x: number) => {
     const t = gTop(x);
     const b = Math.min(topAt(x) - 0.06, t - 0.02);
+    return { t, b, rT: Math.min(gR, (t - b) * 0.55, ghw * 0.95) };
+  };
+  const glass = loft(gStations, (x) => {
+    const { t, b } = glassSec(x);
     return {
       hw: ghw,
       b,
       t,
-      rTop: Math.min(0.1 + s.roofRound * 0.2, 0.18),
+      rTop: gR,
       rBot: 0.01,
       crown: 0.03,
       taper: (y) => glassTaper(y),
@@ -441,7 +472,7 @@ export function buildCar(s: ResolvedShape): CarBuild {
   const RN = 60;
   const rRound = 0.18;
   for (let i = 0; i <= RN; i++) rStations.push(lerp(rx0, rx1, (1 - Math.cos((Math.PI * i) / RN)) / 2));
-  const roofHwBase = ghw * glassTaper(H) - 0.035;
+  const roofHwBase = ghw * glassTaper(H) - gR * 0.55;
   const roof = loft(rStations, (x) => {
     const t = gTop(x) + 0.006;
     let hw = roofHwBase;
@@ -478,6 +509,32 @@ export function buildCar(s: ResolvedShape): CarBuild {
     };
   };
 
+  const corner = (x: number, a = Math.PI / 4) => {
+    const { t, rT } = glassSec(x);
+    const z0 = ghw - rT + rT * Math.cos(a);
+    const y0 = t - rT + rT * Math.sin(a);
+    const topW = smoothstep(t - rT - 0.001, t, y0);
+    const zn = z0 / ghw;
+    return { y: y0 + 0.03 * topW * (1 - zn * zn), z: z0 * glassTaper(y0) };
+  };
+  const glassInfo: GlassInfo = {
+    xs: gStations,
+    top: gTop,
+    corner,
+    sideZ: (y) => ghw * glassTaper(y),
+    cornerStartY: (x) => {
+      const { t, rT } = glassSec(x);
+      return t - rT;
+    },
+    roofHalfWidth: roofHwBase,
+  };
+  const down = new THREE.Vector3(0, -1, 0);
+  const surfaceY = (x: number, z: number) => {
+    ray.set(new THREE.Vector3(x, H + 1, z), down);
+    const hit = ray.intersectObject(bodyMesh, false)[0];
+    return hit ? hit.point.y : null;
+  };
+
   const wz = W / 2 - s.tireW / 2 - 0.035;
   const wheels = [
     new THREE.Vector3(xFw, R, wz),
@@ -503,12 +560,16 @@ export function buildCar(s: ResolvedShape): CarBuild {
     chinY,
     tailMidY: tailMid,
     deckY,
+    rearChinY,
+    gi: glassInfo,
+    surfaceY,
+    archBottom,
   };
 }
 
 /** Tyre cross-section revolved around the axle (axis along z after rotation). */
 export function tyreGeometry(R: number, w: number) {
-  const rim = R * 0.66;
+  const rim = R * 0.7;
   const pts = [
     new THREE.Vector2(rim, -w / 2 + 0.01),
     new THREE.Vector2(R - 0.05, -w / 2),

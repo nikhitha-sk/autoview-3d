@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AutoView 3D
 
-## Getting Started
+Explore famous cars in real-time 3D — inside and out. Rotate, repaint, sit in the driver's seat, or upload a photo of any car to get a 3D model back.
 
-First, run the development server:
+**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · Three.js · React Three Fiber · drei · Gemini · Tripo3D / Meshy · Cloudflare R2
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Production build:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+No API keys are needed. Without keys, **Photo to 3D** runs in demo mode: it builds a procedural model tinted with your photo's paint colour.
 
-## Learn More
+## Optional keys
 
-To learn more about Next.js, take a look at the following resources:
+Copy `.env.example` to `.env.local` and fill in what you have:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Variable | What it enables |
+| --- | --- |
+| `TRIPO_API_KEY` or `MESHY_API_KEY` | Real image-to-3D reconstruction |
+| `GEMINI_API_KEY` | Recognises the car in the photo and links it to the showroom |
+| `R2_*` | Saves generated `.glb` files to Cloudflare R2 |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Keys stay on the server. The browser only calls `/api/*`.
 
-## Deploy on Vercel
+## Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Showroom:** 12 cars with search, brand, body, fuel and price filters (filters are kept in the URL)
+- **3D viewer:** orbit and zoom, camera presets, turntable, fullscreen, paint swatches with animated finishes
+- **Interior:** a driver's-seat view with a wide-angle camera, or a 360° photo if `interior360` is set
+- **Spec sheet:** price, specs, and a blueprint drawing with dimension lines
+- **Photo to 3D:** drag, drop or paste a photo, then Gemini recognition, an async 3D job, polling and a `.glb` download
+- **Themes:** night showroom (dark) and daylight studio (light)
+- **SEO:** generated Open Graph cards, sitemap, robots and JSON-LD
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Keyboard shortcuts on a car page: `1`–`5` camera, `I` interior, `R` turntable, `[` `]` paint, `F` fullscreen.
+
+## How the 3D models work
+
+- The **Ferrari 458** is a real Draco-compressed `.glb` (CC BY 4.0, credited in the footer).
+- **Every other car** is generated procedurally from its real length, width, height and wheelbase. A body-style profile is lofted into smooth cross-sections. Wheel wells, lights, grille, cabin and cockpit are then added.
+- To use a real model, put a `.glb` in `public/models` or on R2 and set `model3d` in `data/cars.json`.
+
+## API
+
+| Route | Purpose |
+| --- | --- |
+| `GET /api/cars?q=&brand=&type=&fuel=&price=` | Car list |
+| `GET /api/cars/:id` | One car |
+| `POST /api/generate` (multipart `image`) | Starts a 3D job and returns a job `id` |
+| `GET /api/status?id=` | Job progress and the model URL when done |
+| `GET /api/model?src=` | Streams a generated `.glb` (allowlisted hosts only) |
+
+## Scripts
+
+```bash
+npm run lint
+npm run thumbnails   # re-render card images (needs `npm run dev` running and Edge/Chrome installed)
+```
+
+## Deploy
+
+Push to GitHub, import the repo on [Vercel](https://vercel.com), add your env variables, and deploy.

@@ -36,14 +36,14 @@ export function stepPaint(m: THREE.MeshPhysicalMaterial, target: THREE.Color, fi
 
 export function makeGlass() {
   return new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color("#0a0e14"),
-    metalness: 0.1,
-    roughness: 0.04,
+    color: new THREE.Color("#05070a"),
+    metalness: 0.2,
+    roughness: 0.03,
     clearcoat: 1,
     clearcoatRoughness: 0.02,
     transparent: true,
-    opacity: 0.86,
-    envMapIntensity: 1.6,
+    opacity: 0.93,
+    envMapIntensity: 1.1,
     side: THREE.DoubleSide,
     depthWrite: false,
   });

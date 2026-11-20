@@ -18,6 +18,12 @@ export default function StudioShot({ car }: { car: Car }) {
       paint: Number(sp.get("paint") ?? 0),
     });
   }, []);
+  useEffect(() => {
+    if (!opts?.bare) return;
+    // transparent page so screenshots keep the alpha channel
+    document.documentElement.style.background = "transparent";
+    document.body.style.background = "transparent";
+  }, [opts]);
   if (!opts) return null;
   return (
     <CarViewer

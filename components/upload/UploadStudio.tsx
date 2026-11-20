@@ -118,7 +118,7 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
     return () => window.removeEventListener("paste", onPaste);
   }, [accept]);
 
-  const poll = useCallback((id: string, failures = 0) => {
+  const poll = useCallback(function tick(id: string, failures = 0) {
     pollRef.current = setTimeout(async () => {
       try {
         const res = await fetch(`/api/status?id=${encodeURIComponent(id)}`, { cache: "no-store" });
@@ -130,13 +130,13 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
           setError(j.error ?? "Generation failed. Try a clearer photo.");
           return setPhase("error");
         }
-        poll(id, 0);
+        tick(id, 0);
       } catch (e) {
         if (failures >= 4) {
           setError(e instanceof Error ? e.message : "Lost connection to the 3D service.");
           return setPhase("error");
         }
-        poll(id, failures + 1); // transient network error — retry
+        tick(id, failures + 1); // transient network error — retry
       }
     }, POLL_MS);
   }, []);

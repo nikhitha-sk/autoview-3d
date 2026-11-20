@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 import type { Car } from "@/lib/types";
 import type { ViewMode, ViewPreset } from "./CarViewer";
@@ -8,16 +8,21 @@ import type { ViewMode, ViewPreset } from "./CarViewer";
 const CarViewer = dynamic(() => import("./CarViewer"), { ssr: false });
 
 export default function StudioShot({ car }: { car: Car }) {
-  const [opts, setOpts] = useState<{ preset: ViewPreset; bare: boolean; mode: ViewMode; paint: number } | null>(null);
-  useEffect(() => {
-    const sp = new URLSearchParams(window.location.search);
-    setOpts({
+  const search = useSyncExternalStore(
+    () => () => {},
+    () => window.location.search,
+    () => null,
+  );
+  const opts = useMemo(() => {
+    if (search === null) return null;
+    const sp = new URLSearchParams(search);
+    return {
       preset: (sp.get("view") as ViewPreset) ?? "hero",
       bare: sp.get("bare") === "1",
       mode: (sp.get("mode") as ViewMode) ?? "exterior",
       paint: Number(sp.get("paint") ?? 0),
-    });
-  }, []);
+    };
+  }, [search]);
   useEffect(() => {
     if (!opts?.bare) return;
     // transparent page so screenshots keep the alpha channel

@@ -61,7 +61,7 @@ export default function ProceduralCar({
   );
 
   useEffect(() => {
-    glassMat.opacity = interior ? 0.1 : 0.86;
+    glassMat.opacity = interior ? 0.1 : 0.93;
     glassMat.needsUpdate = true;
   }, [interior, glassMat]);
 
@@ -109,16 +109,19 @@ function Placed({ p, children }: { p: Placement | null; children: React.ReactNod
 }
 
 function ArchLiners({ s, build, mat }: { s: ResolvedShape; build: CarBuild; mat: THREE.Material }) {
+  const len = s.W / 2 - build.wellZ;
   const geo = useMemo(() => {
-    const g = new THREE.CylinderGeometry(build.archR - 0.004, build.archR - 0.004, s.W * 0.985, 40, 1, true, Math.PI / 2, Math.PI);
+    const g = new THREE.CylinderGeometry(build.archR - 0.004, build.archR - 0.004, len, 40, 1, true, Math.PI / 2, Math.PI);
     g.rotateX(Math.PI / 2);
     return g;
-  }, [s, build]);
+  }, [build, len]);
   return (
     <>
-      {[s.xFw, s.xRw].map((x) => (
-        <mesh key={x} geometry={geo} material={mat} position={[x, s.wheelR, 0]} />
-      ))}
+      {[s.xFw, s.xRw].flatMap((x) =>
+        [1, -1].map((side) => (
+          <mesh key={`${x}${side}`} geometry={geo} material={mat} position={[x, s.wheelR, side * (build.wellZ + len / 2 - 0.004)]} />
+        )),
+      )}
     </>
   );
 }
@@ -201,6 +204,11 @@ function Lights({ s, build, mats }: { s: ResolvedShape; build: CarBuild; mats: M
     const out: { p: Placement | null; kind: string; size: [number, number]; rot?: number }[] = [];
     const front = new THREE.Vector3(-1, -0.15, 0);
     const back = new THREE.Vector3(1, 0, 0);
+    // origin placed so the ray passes through (xF, y, z) — independent of ray slope
+    const aim = (x: number, y: number, z: number, dir: THREE.Vector3) => {
+      const d = dir.clone().normalize();
+      return build.stick(new THREE.Vector3(x, y, z).addScaledVector(d, -0.8), d);
+    };
     const yH = THREE.MathUtils.lerp(build.noseMidY, build.noseTopY, 0.25);
     const fx = s.xF + 1;
     const rx = s.xR - 1;
@@ -209,14 +217,14 @@ function Lights({ s, build, mats }: { s: ResolvedShape; build: CarBuild; mats: M
       const z = side * s.W * 0.33;
       switch (s.headlight) {
         case "round": {
-          const p = build.stick(new THREE.Vector3(fx, yH + 0.02, z), new THREE.Vector3(-1, -0.35, 0));
+          const p = aim(s.xF - 0.05, build.noseTopY - 0.02, side * s.W * 0.34, new THREE.Vector3(-1, -0.45, 0));
           out.push({ p, kind: "round", size: [0.085, 0] });
           break;
         }
         case "split": {
           for (let i = 0; i < 4; i++) {
             const zz = side * (s.W * 0.18 + i * 0.07);
-            out.push({ p: build.stick(new THREE.Vector3(fx, build.noseTopY - 0.03, zz), front), kind: "bar", size: [0.075, 0.022] });
+            out.push({ p: build.stick(new THREE.Vector3(fx, build.noseTopY - 0.03, zz), front), kind: "bar", size: [0.095, 0.02] });
           }
           out.push({
             p: build.stick(new THREE.Vector3(fx, THREE.MathUtils.lerp(build.chinY, build.noseMidY, 0.75), side * s.W * 0.33), front),
@@ -227,12 +235,11 @@ function Lights({ s, build, mats }: { s: ResolvedShape; build: CarBuild; mats: M
         }
         case "sharp": {
           for (let i = 0; i < 3; i++) {
-            const zz = side * (s.W * 0.26 + i * 0.09);
+            const zz = side * (s.W * 0.25 + i * 0.085);
             out.push({
-              p: build.stick(new THREE.Vector3(fx, yH + i * 0.012, zz), front),
+              p: build.stick(new THREE.Vector3(fx, yH + i * 0.014, zz), front),
               kind: "bar",
-              size: [0.1, 0.03],
-              rot: side * 0.12,
+              size: [0.1, 0.024],
             });
           }
           break;
@@ -240,7 +247,7 @@ function Lights({ s, build, mats }: { s: ResolvedShape; build: CarBuild; mats: M
         default: {
           for (let i = 0; i < 4; i++) {
             const zz = side * (s.W * 0.2 + i * 0.075);
-            out.push({ p: build.stick(new THREE.Vector3(fx, yH, zz), front), kind: "bar", size: [0.08, 0.024] });
+            out.push({ p: build.stick(new THREE.Vector3(fx, yH, zz), front), kind: "bar", size: [0.1, 0.022] });
           }
         }
       }
@@ -251,13 +258,13 @@ function Lights({ s, build, mats }: { s: ResolvedShape; build: CarBuild; mats: M
       const n = 13;
       for (let i = 0; i < n; i++) {
         const z = ((i / (n - 1)) * 2 - 1) * s.W * 0.42;
-        out.push({ p: build.stick(new THREE.Vector3(rx, yT, z), back), kind: "tail", size: [0.075, 0.032] });
+        out.push({ p: build.stick(new THREE.Vector3(rx, yT, z), back), kind: "tail", size: [0.095, 0.03] });
       }
     } else if (s.taillight === "pair") {
       for (const side of [1, -1])
         for (let i = 0; i < 3; i++) {
           const z = side * (s.W * 0.3 + i * 0.07);
-          out.push({ p: build.stick(new THREE.Vector3(rx, yT, z), back), kind: "tail", size: [0.075, 0.05] });
+          out.push({ p: build.stick(new THREE.Vector3(rx, yT, z), back), kind: "tail", size: [0.09, 0.045] });
         }
     } else {
       for (const side of [1, -1])
@@ -282,11 +289,13 @@ function Lights({ s, build, mats }: { s: ResolvedShape; build: CarBuild; mats: M
                 <cylinderGeometry args={[part.size[0] + 0.02, part.size[0] + 0.02, 0.02, 32]} />
               </mesh>
               <mesh material={mats.head} position={[0, 0, 0.011]}>
-                <torusGeometry args={[part.size[0] - 0.012, 0.009, 8, 40]} />
+                <torusGeometry args={[part.size[0] - 0.01, 0.005, 8, 40]} />
               </mesh>
-              <mesh material={mats.head} position={[0, 0, 0.012]} rotation={[Math.PI / 2, 0, 0]}>
-                <cylinderGeometry args={[part.size[0] * 0.35, part.size[0] * 0.35, 0.01, 24]} />
-              </mesh>
+              {[0, 1, 2, 3].map((k) => (
+                <mesh key={k} material={mats.head} position={[Math.cos((k * Math.PI) / 2 + Math.PI / 4) * 0.035, Math.sin((k * Math.PI) / 2 + Math.PI / 4) * 0.035, 0.012]}>
+                  <boxGeometry args={[0.018, 0.018, 0.006]} />
+                </mesh>
+              ))}
             </group>
           ) : part.kind === "lamp" ? (
             <RoundedBox args={[part.size[0], part.size[1], 0.03]} radius={0.012} material={mats.headLens}>
@@ -295,9 +304,14 @@ function Lights({ s, build, mats }: { s: ResolvedShape; build: CarBuild; mats: M
               </mesh>
             </RoundedBox>
           ) : (
-            <mesh material={part.kind === "tail" ? mats.tail : mats.head} rotation={[0, 0, part.rot ?? 0]}>
-              <boxGeometry args={[part.size[0], part.size[1], 0.02]} />
-            </mesh>
+            <group rotation={[0, 0, part.rot ?? 0]}>
+              <mesh material={mats.headLens} position={[0, 0, -0.004]}>
+                <boxGeometry args={[part.size[0] + 0.012, part.size[1] + 0.03, 0.02]} />
+              </mesh>
+              <mesh material={part.kind === "tail" ? mats.tail : mats.head} position={[0, part.kind === "tail" ? 0 : 0.006, 0.004]}>
+                <boxGeometry args={[part.size[0], part.size[1], 0.016]} />
+              </mesh>
+            </group>
           )}
         </Placed>
       ))}
@@ -343,9 +357,13 @@ function Grille({ s, build, mats, paint }: { s: ResolvedShape; build: CarBuild; 
               ))}
             </group>
           ) : s.grille === "hex" ? (
-            <mesh material={mats.gloss} rotation={[Math.PI / 2, Math.PI / 6, 0]} scale={[s.W * 0.3, 1, Math.min(0.11, faceH * 0.4)]}>
-              <cylinderGeometry args={[1, 1, 0.02, 6]} />
-            </mesh>
+            <RoundedBox args={[s.W * 0.44, Math.min(0.16, faceH * 0.5), 0.022]} radius={0.04} material={mats.gloss}>
+              {Array.from({ length: 3 }, (_, i) => (
+                <mesh key={i} material={mats.black} position={[0, (i - 1) * Math.min(0.04, faceH * 0.12), 0.013]}>
+                  <boxGeometry args={[s.W * 0.4, 0.008, 0.004]} />
+                </mesh>
+              ))}
+            </RoundedBox>
           ) : (
             <RoundedBox args={[s.W * 0.5, Math.min(0.2, faceH * 0.6), 0.022]} radius={0.03} material={mats.gloss}>
               {Array.from({ length: 4 }, (_, i) => (
@@ -364,15 +382,15 @@ function Grille({ s, build, mats, paint }: { s: ResolvedShape; build: CarBuild; 
 function Mirrors({ s, build, paint, black }: { s: ResolvedShape; build: CarBuild; paint: THREE.Material; black: THREE.Material }) {
   const x = s.xA - 0.16;
   const y = build.beltY + 0.1;
-  const hw = build.bodyHalfWidthAt(x) * 0.93;
+  const hw = build.bodyHalfWidthAt(x) * 0.9;
   return (
     <>
       {[1, -1].map((side) => (
         <group key={side} position={[x, y, side * hw]}>
-          <mesh material={black} position={[0, -0.03, side * 0.04]}>
-            <boxGeometry args={[0.06, 0.03, 0.1]} />
+          <mesh material={black} position={[0, -0.03, side * 0.03]}>
+            <boxGeometry args={[0.06, 0.03, 0.08]} />
           </mesh>
-          <RoundedBox args={[0.11, 0.1, 0.19]} radius={0.04} position={[-0.02, 0, side * 0.15]} material={paint} />
+          <RoundedBox args={[0.1, 0.09, 0.17]} radius={0.04} position={[-0.02, 0, side * 0.1]} material={paint} />
         </group>
       ))}
     </>

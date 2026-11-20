@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { recogniseCar, type Recognition } from "@/lib/gemini";
 import { ALLOWED_TYPES, MAX_UPLOAD_BYTES, activeProvider, rateLimited, startJob } from "@/lib/jobs";
 import { r2Enabled } from "@/lib/r2";
+import { archetypeForBody } from "@/lib/demoCar";
 
 export const maxDuration = 60;
 
@@ -51,8 +52,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const hint = String(form.get("archetype") ?? "auto");
     const job = await startJob(file, file.type, {
-      archetype: String(form.get("archetype") ?? ""),
+      archetype: hint !== "auto" ? hint : (archetypeForBody(recognition?.bodyType) ?? undefined),
       color: String(form.get("color") ?? ""),
     });
     return NextResponse.json({ ...job, recognition, recognitionError }, { status: 202 });

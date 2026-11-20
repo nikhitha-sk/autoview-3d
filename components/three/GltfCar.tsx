@@ -18,9 +18,10 @@ export interface GltfCarProps {
   interior?: boolean;
   /** Re-centre and scale unknown models (e.g. AI-generated) to a ~4.5 m car on the ground. */
   normalize?: boolean;
+  rotationY?: number;
 }
 
-export default function GltfCar({ url, paint, interior = false, normalize = false }: GltfCarProps) {
+export default function GltfCar({ url, paint, interior = false, normalize = false, rotationY = 0 }: GltfCarProps) {
   const { scene } = useGLTF(url, "/draco/");
   const paintMat = useMemo(() => (paint ? makePaint(paint.hex, paint.finish) : null), []); // eslint-disable-line react-hooks/exhaustive-deps
   const glassMat = useMemo(() => makeGlass(), []);
@@ -69,5 +70,9 @@ export default function GltfCar({ url, paint, interior = false, normalize = fals
     if (paintMat && paint) stepPaint(paintMat, target, paint.finish, Math.min(dt, 0.1));
   });
 
-  return <primitive object={model.root} />;
+  return (
+    <group rotation={[0, rotationY, 0]}>
+      <primitive object={model.root} />
+    </group>
+  );
 }

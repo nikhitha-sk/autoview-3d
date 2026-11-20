@@ -82,7 +82,8 @@ export interface Car {
   interiorColor: string;
   model3d?: string;
   modelCredit?: ModelCredit;
-  modelShadow?: string;
+  /** Yaw applied to a .glb so its nose faces +Z. */
+  modelRotationY?: number;
   interiorCamera?: InteriorCamera;
   interior360?: string;
   thumbnail: string;

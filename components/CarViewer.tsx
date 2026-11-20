@@ -108,7 +108,13 @@ export default function CarViewer({
             <>
               <Studio theme={theme} quality={q} radius={Math.max(L * 0.68, 2.4)} accent={accent} bare={bare} />
               {url ? (
-                <GltfCar url={url} normalize={normalize} paint={paintValue} interior={mode === "interior"} />
+                <GltfCar
+                  url={url}
+                  normalize={normalize}
+                  rotationY={modelUrl ? 0 : car?.modelRotationY}
+                  paint={paintValue}
+                  interior={mode === "interior"}
+                />
               ) : car ? (
                 <ProceduralCar
                   dimensions={car.dimensions}

@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: PageProps<"/car/[id]">): Prom
   return {
     title,
     description,
-    openGraph: { title, description, images: [{ url: car.thumbnail, alt: `${car.brand} ${car.name}` }] },
-    twitter: { card: "summary_large_image", title, description, images: [car.thumbnail] },
+    openGraph: { title, description },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 

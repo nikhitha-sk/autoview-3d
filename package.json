@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "thumbnails": "node scripts/render-thumbnails.mjs http://localhost:3000",
+    "optimize:model": "npx @gltf-transform/cli optimize"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

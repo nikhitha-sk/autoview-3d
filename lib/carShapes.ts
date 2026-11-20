@@ -31,6 +31,10 @@ interface Preset {
   spokes: number;
   rimColor: string;
   caliper: string;
+  /** Extra fender hump over the wheels (m), purely for character. */
+  fenderFlare: number;
+  /** Fraction of the rear glass slope covered by body-coloured roof (fastbacks). */
+  roofExtend: number;
 }
 
 const base: Preset = {
@@ -59,6 +63,8 @@ const base: Preset = {
   spokes: 5,
   rimColor: "#c9ccd1",
   caliper: "#1a1a1a",
+  fenderFlare: 0.015,
+  roofExtend: 0,
 };
 
 export const PRESETS: Record<Archetype, Preset> = {
@@ -68,14 +74,14 @@ export const PRESETS: Record<Archetype, Preset> = {
     wheelR: 0.345,
     tireW: 0.27,
     clearance: 0.11,
-    noseY: 0.42,
+    noseY: 0.47,
     hoodY: 0.6,
-    beltRearY: 0.68,
+    beltRearY: 0.66,
     deckY: 0.62,
     tailMidY: 0.5,
-    aX: 0.35,
-    roofFrontX: 0.5,
-    roofRearX: 0.62,
+    aX: 0.33,
+    roofFrontX: 0.48,
+    roofRearX: 0.6,
     cX: 0.88,
     noseRound: 0.26,
     tailRound: 0.3,
@@ -86,6 +92,7 @@ export const PRESETS: Record<Archetype, Preset> = {
     headlight: "round",
     taillight: "bar",
     spokes: 10,
+    roofExtend: 0.6,
   },
   supercar: {
     ...base,
@@ -93,26 +100,27 @@ export const PRESETS: Record<Archetype, Preset> = {
     wheelR: 0.35,
     tireW: 0.3,
     clearance: 0.1,
-    noseY: 0.3,
-    hoodY: 0.56,
-    beltRearY: 0.74,
-    deckY: 0.73,
+    noseY: 0.45,
+    hoodY: 0.62,
+    beltRearY: 0.75,
+    deckY: 0.75,
     tailMidY: 0.55,
-    aX: 0.29,
+    aX: 0.3,
     roofFrontX: 0.45,
     roofRearX: 0.57,
-    cX: 0.8,
+    cX: 0.79,
     noseRun: 0.07,
     noseRound: 0.14,
     tailRound: 0.07,
     roofRound: 0.3,
     glassTaper: 0.32,
-    glassWidth: 0.74,
-    grille: "hex",
+    glassWidth: 0.78,
+    grille: "none",
     headlight: "sharp",
     taillight: "pair",
     spokes: 5,
     rimColor: "#2a2c30",
+    roofExtend: 0.35,
   },
   coupe: {
     ...base,
@@ -120,15 +128,15 @@ export const PRESETS: Record<Archetype, Preset> = {
     wheelR: 0.345,
     tireW: 0.27,
     clearance: 0.12,
-    noseY: 0.44,
-    hoodY: 0.61,
-    beltRearY: 0.67,
-    deckY: 0.7,
+    noseY: 0.5,
+    hoodY: 0.62,
+    beltRearY: 0.66,
+    deckY: 0.69,
     tailMidY: 0.55,
-    aX: 0.4,
-    roofFrontX: 0.55,
-    roofRearX: 0.69,
-    cX: 0.82,
+    aX: 0.37,
+    roofFrontX: 0.5,
+    roofRearX: 0.66,
+    cX: 0.8,
     noseRound: 0.2,
     tailRound: 0.12,
     roofRound: 0.3,
@@ -139,6 +147,7 @@ export const PRESETS: Record<Archetype, Preset> = {
     taillight: "pair",
     spokes: 7,
     rimColor: "#24262a",
+    roofExtend: 0.25,
   },
   boxy: {
     ...base,
@@ -219,6 +228,7 @@ export const PRESETS: Record<Archetype, Preset> = {
     taillight: "bar",
     spokes: 5,
     rimColor: "#3a3d42",
+    roofExtend: 0.2,
   },
   offroad: {
     ...base,

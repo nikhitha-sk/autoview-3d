@@ -36,7 +36,9 @@ export default function SiteFooter() {
                 </a>
               </li>
               <li>
-                <a className="text-muted hover:text-text" href="/api/cars">Cars API (JSON)</a>
+                <Link className="text-muted hover:text-text" href="/api/cars" prefetch={false}>
+                  Cars API (JSON)
+                </Link>
               </li>
             </ul>
           </div>

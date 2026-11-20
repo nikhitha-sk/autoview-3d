@@ -497,8 +497,8 @@ function Cabin({
         <boxGeometry args={[cabinLen + 0.3, 0.02, innerHw * 2]} />
       </mesh>
       {[1, -1].map((sd) => (
-        <mesh key={sd} material={mats.trim} position={[(s.xA + s.xC) / 2 + 0.05, (floorY + dashTop) / 2 + 0.02, sd * innerHw]}>
-          <boxGeometry args={[cabinLen + 0.2, dashTop - floorY + 0.04, 0.03]} />
+        <mesh key={sd} material={mats.trim} position={[(s.xA + s.xC) / 2 + 0.05, (floorY + build.beltY - 0.03) / 2, sd * innerHw]}>
+          <boxGeometry args={[cabinLen + 0.2, build.beltY - 0.03 - floorY, 0.03]} />
         </mesh>
       ))}
       {/* headliner */}

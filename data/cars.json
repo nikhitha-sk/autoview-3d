@@ -37,11 +37,11 @@
   },
   {
     "id": "ferrari-458",
-    "name": "458 Italia",
+    "name": "458 Spider",
     "brand": "Ferrari",
-    "year": "2009 – 2015",
-    "tagline": "Maranello's last naturally aspirated V8 icon.",
-    "description": "Designed by Pininfarina and powered by a 9,000 rpm 4.5-litre V8, the 458 Italia is widely considered one of the greatest mid-engined Ferraris ever built. This is a fully detailed, real-scale 3D model including its cabin.",
+    "year": "2011 – 2015",
+    "tagline": "Maranello's naturally aspirated V8, roof down.",
+    "description": "Designed by Pininfarina and powered by a 9,000 rpm 4.5-litre V8, the 458 is widely considered one of the greatest mid-engined Ferraris ever built. The Spider adds a folding aluminium hard-top that stows in 14 seconds. This is a fully detailed, real-scale 3D model including its cabin.",
     "priceRange": "₹3.9 – 4.5 Cr",
     "priceFrom": 390,
     "priceTo": 450,
@@ -54,10 +54,10 @@
     "drivetrain": "RWD",
     "mileage": "~7.4 kmpl",
     "acceleration": "3.4 s",
-    "topSpeed": "325 km/h",
+    "topSpeed": "320 km/h",
     "seats": 2,
     "origin": "Italy",
-    "dimensions": { "length": 4527, "width": 1937, "height": 1213, "wheelbase": 2650 },
+    "dimensions": { "length": 4527, "width": 1937, "height": 1211, "wheelbase": 2650 },
     "paints": [
       { "name": "Rosso Corsa", "hex": "#c8102e", "finish": "gloss" },
       { "name": "Giallo Modena", "hex": "#f5c400", "finish": "gloss" },
@@ -68,8 +68,9 @@
     ],
     "interiorColor": "#1a1a1a",
     "model3d": "/models/ferrari-458.glb",
+    "modelRotationY": 3.14159265,
     "modelCredit": {
-      "title": "Ferrari 458 Italia",
+      "title": "Ferrari 458 Italia (Spider)",
       "author": "vicent091036",
       "url": "https://sketchfab.com/models/57bf6cc56931426e87494f554df1dab6",
       "license": "CC BY 4.0"
@@ -77,7 +78,7 @@
     "interiorCamera": { "position": [0.36, 0.98, -0.32], "target": [0.36, 0.9, 1.2] },
     "thumbnail": "/cars/ferrari-458.png",
     "shape": { "archetype": "supercar" },
-    "tags": ["Icon", "Mid-engine", "Real model"]
+    "tags": ["Icon", "Mid-engine", "Convertible", "Real model"]
   },
   {
     "id": "lamborghini-huracan",

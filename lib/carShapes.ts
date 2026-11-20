@@ -35,6 +35,20 @@ interface Preset {
   fenderFlare: number;
   /** Fraction of the rear glass slope covered by body-coloured roof (fastbacks). */
   roofExtend: number;
+  /** Shoulder radius of the body cross-section (m): large = soft, small = slab-sided. */
+  bodyRound: number;
+  /** How much the sides bow outward below the shoulder (0 = flat). */
+  sideBulge: number;
+  /** Narrowing of the body toward nose and tail in plan view. */
+  planTaper: number;
+  /** Arch of the roofline above the header points (m). */
+  roofArch: number;
+  doors: 2 | 4;
+  /** Rear pillar treatment: wide body-coloured sail (coupés) or slim D-pillar (SUVs). */
+  rearPillar: "sail" | "slim";
+  /** Chrome window surround instead of black. */
+  chromeTrim: boolean;
+  roofRails: boolean;
 }
 
 const base: Preset = {
@@ -65,6 +79,14 @@ const base: Preset = {
   caliper: "#1a1a1a",
   fenderFlare: 0.015,
   roofExtend: 0,
+  bodyRound: 0.18,
+  sideBulge: 0.06,
+  planTaper: 0.05,
+  roofArch: 0.02,
+  doors: 4,
+  rearPillar: "slim",
+  chromeTrim: false,
+  roofRails: false,
 };
 
 export const PRESETS: Record<Archetype, Preset> = {
@@ -93,6 +115,13 @@ export const PRESETS: Record<Archetype, Preset> = {
     taillight: "bar",
     spokes: 10,
     roofExtend: 0.6,
+    bodyRound: 0.3,
+    sideBulge: 0.1,
+    planTaper: 0.1,
+    roofArch: 0.05,
+    doors: 2,
+    rearPillar: "sail",
+    fenderFlare: 0.035,
   },
   supercar: {
     ...base,
@@ -121,6 +150,13 @@ export const PRESETS: Record<Archetype, Preset> = {
     spokes: 5,
     rimColor: "#2a2c30",
     roofExtend: 0.35,
+    bodyRound: 0.22,
+    sideBulge: 0.1,
+    planTaper: 0.11,
+    roofArch: 0.04,
+    doors: 2,
+    rearPillar: "sail",
+    fenderFlare: 0.03,
   },
   coupe: {
     ...base,
@@ -148,6 +184,13 @@ export const PRESETS: Record<Archetype, Preset> = {
     spokes: 7,
     rimColor: "#24262a",
     roofExtend: 0.25,
+    bodyRound: 0.24,
+    sideBulge: 0.09,
+    planTaper: 0.08,
+    roofArch: 0.04,
+    doors: 2,
+    rearPillar: "sail",
+    fenderFlare: 0.03,
   },
   boxy: {
     ...base,
@@ -175,6 +218,11 @@ export const PRESETS: Record<Archetype, Preset> = {
     taillight: "vertical",
     spokes: 6,
     rimColor: "#1c1d20",
+    bodyRound: 0.06,
+    sideBulge: 0.015,
+    planTaper: 0.01,
+    roofArch: 0.004,
+    chromeTrim: true,
   },
   "luxury-suv": {
     ...base,
@@ -201,6 +249,11 @@ export const PRESETS: Record<Archetype, Preset> = {
     headlight: "strip",
     taillight: "vertical",
     spokes: 10,
+    bodyRound: 0.14,
+    sideBulge: 0.05,
+    planTaper: 0.04,
+    roofArch: 0.012,
+    chromeTrim: true,
   },
   crossover: {
     ...base,
@@ -229,6 +282,10 @@ export const PRESETS: Record<Archetype, Preset> = {
     spokes: 5,
     rimColor: "#3a3d42",
     roofExtend: 0.2,
+    bodyRound: 0.3,
+    sideBulge: 0.09,
+    planTaper: 0.09,
+    roofArch: 0.05,
   },
   offroad: {
     ...base,
@@ -256,6 +313,10 @@ export const PRESETS: Record<Archetype, Preset> = {
     taillight: "vertical",
     spokes: 6,
     rimColor: "#2b2d31",
+    bodyRound: 0.07,
+    sideBulge: 0.02,
+    planTaper: 0.015,
+    roofArch: 0.005,
   },
   suv: {
     ...base,
@@ -282,6 +343,12 @@ export const PRESETS: Record<Archetype, Preset> = {
     headlight: "sharp",
     taillight: "pair",
     spokes: 6,
+    bodyRound: 0.16,
+    sideBulge: 0.06,
+    planTaper: 0.05,
+    roofArch: 0.015,
+    chromeTrim: true,
+    roofRails: true,
   },
   "compact-suv": {
     ...base,
@@ -308,6 +375,11 @@ export const PRESETS: Record<Archetype, Preset> = {
     headlight: "split",
     taillight: "bar",
     spokes: 5,
+    bodyRound: 0.2,
+    sideBulge: 0.07,
+    planTaper: 0.06,
+    roofArch: 0.02,
+    roofRails: true,
   },
   hatch: {
     ...base,
@@ -334,6 +406,11 @@ export const PRESETS: Record<Archetype, Preset> = {
     headlight: "sharp",
     taillight: "pair",
     spokes: 8,
+    bodyRound: 0.24,
+    sideBulge: 0.08,
+    planTaper: 0.07,
+    roofArch: 0.03,
+    rearPillar: "sail",
   },
 };
 

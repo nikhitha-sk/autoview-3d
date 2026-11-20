@@ -31,7 +31,7 @@
       { "name": "Carrara White", "hex": "#e9e7e1", "finish": "pearl" }
     ],
     "interiorColor": "#2a1d17",
-    "thumbnail": "/cars/porsche-911.png",
+    "thumbnail": "/cars/porsche-911.webp",
     "shape": { "archetype": "sports", "caliper": "#c1121f", "exhausts": 2 },
     "tags": ["Icon", "Rear-engine", "Sports car"]
   },
@@ -76,7 +76,7 @@
       "license": "CC BY 4.0"
     },
     "interiorCamera": { "position": [0.36, 0.98, -0.32], "target": [0.36, 0.9, 1.2] },
-    "thumbnail": "/cars/ferrari-458.png",
+    "thumbnail": "/cars/ferrari-458.webp",
     "shape": { "archetype": "supercar" },
     "tags": ["Icon", "Mid-engine", "Convertible", "Real model"]
   },
@@ -112,7 +112,7 @@
       { "name": "Bianco Monocerus", "hex": "#f1f1ee", "finish": "gloss" }
     ],
     "interiorColor": "#141414",
-    "thumbnail": "/cars/lamborghini-huracan.png",
+    "thumbnail": "/cars/lamborghini-huracan.webp",
     "shape": { "archetype": "supercar", "caliper": "#ffc20e", "exhausts": 2 },
     "tags": ["V10", "AWD", "Supercar"]
   },
@@ -148,7 +148,7 @@
       { "name": "Alpine White", "hex": "#f0f0ee", "finish": "gloss" }
     ],
     "interiorColor": "#c4501f",
-    "thumbnail": "/cars/bmw-m4.png",
+    "thumbnail": "/cars/bmw-m4.webp",
     "shape": { "archetype": "coupe", "caliper": "#1f4fa3", "exhausts": 4 },
     "tags": ["Inline-6", "AWD", "Track"]
   },
@@ -184,7 +184,7 @@
       { "name": "Hyacinth Red", "hex": "#5c0f1a", "finish": "metallic" }
     ],
     "interiorColor": "#2c2622",
-    "thumbnail": "/cars/mercedes-g63.png",
+    "thumbnail": "/cars/mercedes-g63.webp",
     "shape": { "archetype": "boxy", "spareWheel": true, "caliper": "#c1121f", "exhausts": 4 },
     "tags": ["V8", "Off-road", "Luxury"]
   },
@@ -220,7 +220,7 @@
       { "name": "Lantau Bronze", "hex": "#6b5543", "finish": "metallic" }
     ],
     "interiorColor": "#c9bba5",
-    "thumbnail": "/cars/range-rover.png",
+    "thumbnail": "/cars/range-rover.webp",
     "shape": { "archetype": "luxury-suv", "roofBlack": true },
     "tags": ["Luxury", "AWD", "Flagship"]
   },
@@ -256,7 +256,7 @@
       { "name": "Glacier Blue", "hex": "#7b9bb8", "finish": "metallic" }
     ],
     "interiorColor": "#1c1c1e",
-    "thumbnail": "/cars/tesla-model-y.png",
+    "thumbnail": "/cars/tesla-model-y.webp",
     "shape": { "archetype": "crossover", "taillight": "bar", "headlight": "strip" },
     "tags": ["EV", "Tech", "Family"]
   },
@@ -292,7 +292,7 @@
       { "name": "Stealth Black", "hex": "#111214", "finish": "metallic" }
     ],
     "interiorColor": "#e7e0d4",
-    "thumbnail": "/cars/mahindra-thar-roxx.png",
+    "thumbnail": "/cars/mahindra-thar-roxx.webp",
     "shape": { "archetype": "offroad", "spareWheel": true, "roofBlack": true },
     "tags": ["4x4", "Made in India", "Off-road"]
   },
@@ -328,7 +328,7 @@
       { "name": "Avant-Garde Bronze", "hex": "#7a5d45", "finish": "metallic" }
     ],
     "interiorColor": "#1d1b1a",
-    "thumbnail": "/cars/toyota-fortuner.png",
+    "thumbnail": "/cars/toyota-fortuner.webp",
     "shape": { "archetype": "suv" },
     "tags": ["7 seats", "4x4", "Diesel"]
   },
@@ -364,7 +364,7 @@
       { "name": "Ranger Khaki", "hex": "#7a7356", "finish": "matte" }
     ],
     "interiorColor": "#d9d3c7",
-    "thumbnail": "/cars/hyundai-creta.png",
+    "thumbnail": "/cars/hyundai-creta.webp",
     "shape": { "archetype": "compact-suv", "taillight": "bar" },
     "tags": ["Best-seller", "Family", "Made in India"]
   },
@@ -400,7 +400,7 @@
       { "name": "Daytona Grey", "hex": "#5b5f63", "finish": "metallic" }
     ],
     "interiorColor": "#3a3f47",
-    "thumbnail": "/cars/tata-nexon-ev.png",
+    "thumbnail": "/cars/tata-nexon-ev.webp",
     "shape": { "archetype": "compact-suv", "grille": "none", "headlight": "split", "taillight": "bar" },
     "tags": ["EV", "Made in India", "Compact"]
   },
@@ -436,7 +436,7 @@
       { "name": "Splendid Silver", "hex": "#b5b8bc", "finish": "metallic" }
     ],
     "interiorColor": "#1f1f22",
-    "thumbnail": "/cars/maruti-swift.png",
+    "thumbnail": "/cars/maruti-swift.webp",
     "shape": { "archetype": "hatch" },
     "tags": ["Efficient", "City", "Made in India"]
   }

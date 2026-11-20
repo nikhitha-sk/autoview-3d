@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { CameraControls, CameraControlsImpl, PerformanceMonitor } from "@react-three/drei";
+import { CameraControls, CameraControlsImpl, PerformanceMonitor, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import ProceduralCar from "./three/ProceduralCar";
 import GltfCar from "./three/GltfCar";
@@ -31,6 +31,13 @@ export interface CarViewerProps {
   interactive?: boolean;
   intro?: boolean;
   className?: string;
+  /** Shift the framing (world units, camera space) e.g. to leave room for a headline. */
+  focalOffset?: [number, number, number];
+  showLoader?: boolean;
+  /** Multiplies the default camera distance for every preset. */
+  distanceScale?: number;
+  /** Mouse-wheel dolly. Disable where the page must keep scrolling (hero). */
+  wheelZoom?: boolean;
   onInteract?: () => void;
 }
 
@@ -64,6 +71,10 @@ export default function CarViewer({
   interactive = true,
   intro = true,
   className,
+  focalOffset,
+  showLoader = true,
+  wheelZoom = true,
+  distanceScale = 1,
   onInteract,
 }: CarViewerProps) {
   const [q, setQ] = useState<Quality>("high");
@@ -89,6 +100,7 @@ export default function CarViewer({
 
   return (
     <div className={className} style={{ touchAction: interactive ? "none" : "auto" }}>
+      <div className="relative h-full w-full">
       <Canvas
         dpr={dpr}
         camera={{ fov: 32, near: 0.03, far: 120, position: [L * 2.2, H * 1.6 + 1.2, L * 2.6] }}
@@ -139,9 +151,44 @@ export default function CarViewer({
           autoRotate={autoRotate}
           interactive={interactive}
           intro={intro}
+          focalOffset={focalOffset}
+          wheelZoom={wheelZoom}
+          distanceScale={distanceScale}
           onInteract={onInteract}
         />
       </Canvas>
+      {showLoader && <LoaderOverlay />}
+      </div>
+    </div>
+  );
+}
+
+function LoaderOverlay() {
+  const { active, progress } = useProgress();
+  const [shown, setShown] = useState(true);
+  useEffect(() => {
+    if (active) {
+      setShown(true);
+      return;
+    }
+    const t = setTimeout(() => setShown(false), 450);
+    return () => clearTimeout(t);
+  }, [active]);
+  if (!shown) return null;
+  const pct = Math.round(active ? progress : 100);
+  return (
+    <div
+      className={`pointer-events-none absolute inset-0 grid place-items-center transition-opacity duration-500 ${
+        active ? "opacity-100" : "opacity-0"
+      }`}
+      aria-live="polite"
+    >
+      <div className="flex w-56 flex-col items-center gap-3">
+        <span className="eyebrow">Loading model · {pct}%</span>
+        <div className="h-px w-full overflow-hidden bg-line">
+          <div className="h-full bg-accent transition-[width] duration-300" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -169,6 +216,9 @@ function Rig({
   autoRotate,
   interactive,
   intro,
+  focalOffset,
+  wheelZoom,
+  distanceScale,
   onInteract,
 }: {
   L: number;
@@ -179,6 +229,9 @@ function Rig({
   autoRotate: boolean;
   interactive: boolean;
   intro: boolean;
+  focalOffset?: [number, number, number];
+  wheelZoom: boolean;
+  distanceScale: number;
   onInteract?: () => void;
 }) {
   const ref = useRef<CameraControlsImpl>(null);
@@ -188,7 +241,7 @@ function Rig({
   const aspect = size.width / Math.max(1, size.height);
 
   const presets = useMemo(() => {
-    const D = Math.max(L, 3.6) * 1.32 * (aspect < 0.8 ? 1.75 : aspect < 1.3 ? 1.3 : 1);
+    const D = Math.max(L, 3.6) * 1.55 * distanceScale * (aspect < 0.8 ? 1.7 : aspect < 1.3 ? 1.25 : 1);
     const ty = H * 0.42;
     const p: Record<ViewPreset, [number, number, number, number, number, number]> = {
       hero: [D * 0.66, H * 0.5 + 0.55, D * 0.76, 0, ty, 0],
@@ -198,7 +251,7 @@ function Rig({
       top: [0.001, D * 1.35, 0.002, 0, 0, 0],
     };
     return p;
-  }, [L, H, aspect]);
+  }, [L, H, aspect, distanceScale]);
 
   // controls configuration per mode
   useEffect(() => {
@@ -221,18 +274,18 @@ function Rig({
       c.touches.three = ACTION.NONE;
     } else {
       c.minDistance = Math.max(L, 3.6) * 0.75;
-      c.maxDistance = Math.max(L, 3.6) * 3.2;
+      c.maxDistance = Math.max(L, 3.6) * 3.2 * Math.max(1, distanceScale);
       c.minPolarAngle = 0;
       c.maxPolarAngle = Math.PI / 2 - 0.035;
       c.azimuthRotateSpeed = 1;
       c.polarRotateSpeed = 1;
-      c.mouseButtons.wheel = ACTION.DOLLY;
+      c.mouseButtons.wheel = wheelZoom ? ACTION.DOLLY : ACTION.NONE;
       c.mouseButtons.right = ACTION.NONE;
       c.mouseButtons.middle = ACTION.DOLLY;
       c.touches.two = ACTION.TOUCH_DOLLY;
       c.touches.three = ACTION.NONE;
     }
-  }, [mode, L]);
+  }, [mode, L, wheelZoom]);
 
   // camera moves
   useEffect(() => {
@@ -253,6 +306,14 @@ function Rig({
     const p = presets[view.preset] ?? presets.hero;
     c.setLookAt(...p, animate);
   }, [mode, interior, view.preset, view.nonce, presets, intro]);
+
+  const [fx, fy, fz] = focalOffset ?? [0, 0, 0];
+  useEffect(() => {
+    const c = ref.current;
+    if (!c) return;
+    const fp = mode !== "exterior";
+    c.setFocalOffset(fp ? 0 : fx, fp ? 0 : fy, fp ? 0 : fz, true);
+  }, [fx, fy, fz, mode]);
 
   useEffect(() => {
     const c = ref.current;

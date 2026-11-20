@@ -85,6 +85,9 @@ interface SectionParams {
   wellZ?: number;
   bOuter?: number;
   fender?: number;
+  /** Cabin opening: top surface inside |z| < cabinZ drops to cabinFloor (the "tub"). */
+  cabinZ?: number;
+  cabinFloor?: number;
   /** maps (y, section) -> z scale factor (tumblehome) */
   taper: (y: number, b: number, t: number) => number;
 }
@@ -166,6 +169,10 @@ function ring(sp: SectionParams, out: [number, number][]) {
         const remapped = bO + ((y - sp.b) / Math.max(1e-4, sp.t - sp.b)) * (tO - bO);
         yy = lerp(y, remapped, w);
       }
+    }
+    if (sp.cabinZ !== undefined && sp.cabinFloor !== undefined && y >= mid) {
+      const wc = smoothstep(sp.cabinZ - 0.025, sp.cabinZ + 0.005, Math.abs(z));
+      yy = lerp(sp.cabinFloor, yy, wc);
     }
     yy += sp.crown * topW * (1 - zn * zn);
     p[0] = z * sp.taper(y, sp.b, sp.t);
@@ -374,10 +381,17 @@ export function buildCar(s: ResolvedShape): CarBuild {
 
   const stations = makeStations(xR, xF, wheelsX.map((x) => ({ x, r: aR })));
   const wellZ = W / 2 - s.tireW - 0.07;
+  // cabin tub runs from just behind the windscreen base to behind the rear seats / into the boot
+  const cabinFront = xA - 0.04;
+  const cabinRear = Math.max(xC + 0.12, xR + 0.25);
+  const cabinFloor = cl + 0.1;
   const body = loft(stations, (x) => {
     const b = bottomAt(x);
     const ab = archBottom(x);
+    const inCabin = x > cabinRear && x < cabinFront;
     return {
+      cabinZ: inCabin ? hwAt(x) * 0.86 : undefined,
+      cabinFloor: inCabin ? cabinFloor : undefined,
       hw: hwAt(x),
       b,
       t: topAt(x),

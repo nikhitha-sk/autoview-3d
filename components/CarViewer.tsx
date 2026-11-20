@@ -1,10 +1,11 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { CameraControls, CameraControlsImpl, PerformanceMonitor, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 import ProceduralCar from "./three/ProceduralCar";
+import InteriorViewer from "./InteriorViewer";
 import GltfCar from "./three/GltfCar";
 import Studio, { type Quality, type StudioTheme } from "./three/Studio";
 import { resolveShape, driverView } from "@/lib/carShapes";
@@ -115,7 +116,7 @@ export default function CarViewer({
         />
         <Suspense fallback={null}>
           {pano ? (
-            <InteriorSphere url={pano} />
+            <InteriorViewer url={pano} />
           ) : (
             <>
               <Studio theme={theme} quality={q} radius={Math.max(L * 0.68, 2.4)} accent={accent} bare={bare} />
@@ -190,20 +191,6 @@ function LoaderOverlay() {
         </div>
       </div>
     </div>
-  );
-}
-
-function InteriorSphere({ url }: { url: string }) {
-  const tex = useLoader(THREE.TextureLoader, url);
-  useEffect(() => {
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.needsUpdate = true;
-  }, [tex]);
-  return (
-    <mesh position={[0, 1.2, 0]} scale={[-1, 1, 1]}>
-      <sphereGeometry args={[10, 64, 40]} />
-      <meshBasicMaterial map={tex} side={THREE.BackSide} toneMapped={false} />
-    </mesh>
   );
 }
 

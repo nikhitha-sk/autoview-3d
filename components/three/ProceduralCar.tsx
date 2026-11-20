@@ -471,8 +471,8 @@ function Cabin({
   const floorY = s.clearance + 0.1;
   const innerHw = build.bodyHalfWidthAt(ex) * 0.86;
   const hip = Math.max(floorY + 0.12, ey - 0.78);
-  const dashX = Math.min(s.xA - 0.02, ex + 0.95);
-  const dashBackX = ex + 0.55;
+  const dashX = Math.min(s.xA - 0.02, ex + 1.15);
+  const dashBackX = Math.min(ex + 0.8, dashX - 0.2);
   const dashTop = build.beltY + 0.02;
   const dashLen = Math.max(0.2, dashX - dashBackX);
   const cabinLen = Math.max(0.6, s.xA - (s.xC + 0.25));
@@ -534,7 +534,7 @@ function Cabin({
         </mesh>
       </group>
       {/* steering wheel */}
-      <group position={[ex + 0.46, ey - 0.3, ez]} rotation={[0, -Math.PI / 2, 0]}>
+      <group position={[ex + 0.52, ey - 0.3, ez]} rotation={[0, -Math.PI / 2, 0]}>
         <group rotation={[-0.32, 0, 0]}>
           <mesh material={mats.leather}>
             <torusGeometry args={[0.18, 0.02, 12, 48]} />
@@ -550,8 +550,8 @@ function Cabin({
           <mesh material={mats.tail} position={[0, 0.18, 0.012]}>
             <boxGeometry args={[0.02, 0.02, 0.01]} />
           </mesh>
-          <mesh material={mats.trimDark} position={[0, 0, -0.18]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.025, 0.03, 0.34, 12]} />
+          <mesh material={mats.trimDark} position={[0, 0, -0.16]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.025, 0.03, 0.3, 12]} />
           </mesh>
         </group>
       </group>

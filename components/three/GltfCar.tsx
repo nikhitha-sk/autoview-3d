@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import type { PaintFinish } from "@/lib/types";
-import { makeGlass, makePaint, stepPaint } from "./materials";
+import { makeGlass, makePaint, setGlassMode, stepPaint } from "./materials";
 
 useGLTF.setDecoderPath("/draco/");
 
@@ -62,9 +62,7 @@ export default function GltfCar({ url, paint, interior = false, normalize = fals
     return { root, repainted };
   }, [scene, paintMat, glassMat, normalize]);
 
-  useEffect(() => {
-    glassMat.opacity = interior ? 0.08 : 0.82;
-  }, [interior, glassMat]);
+  useEffect(() => setGlassMode(glassMat, interior, 0.82), [interior, glassMat]);
 
   useFrame((_, dt) => {
     if (paintMat && paint) stepPaint(paintMat, target, paint.finish, Math.min(dt, 0.1));

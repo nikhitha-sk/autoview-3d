@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import { resolveShape, driverView, type ResolvedShape } from "@/lib/carShapes";
 import { buildCar, cockpitTexture, tyreGeometry, type CarBuild, type Placement } from "@/lib/three/buildCar";
 import type { PaintFinish, ShapeOverrides } from "@/lib/types";
-import { makeGlass, makePaint, stepPaint } from "./materials";
+import { makeGlass, makePaint, setGlassMode, stepPaint } from "./materials";
 
 export interface ProceduralCarProps {
   dimensions: { length: number; width: number; height: number; wheelbase: number };
@@ -60,10 +60,7 @@ export default function ProceduralCar({
     [s.rimColor, s.caliper, interiorColor],
   );
 
-  useEffect(() => {
-    glassMat.opacity = interior ? 0.1 : 0.93;
-    glassMat.needsUpdate = true;
-  }, [interior, glassMat]);
+  useEffect(() => setGlassMode(glassMat, interior), [interior, glassMat]);
 
   useFrame((_, dt) => stepPaint(paintMat, target, paint.finish, Math.min(dt, 0.1)));
 
@@ -214,7 +211,6 @@ function Lights({ s, build, mats }: { s: ResolvedShape; build: CarBuild; mats: M
     const rx = s.xR - 1;
 
     for (const side of [1, -1]) {
-      const z = side * s.W * 0.33;
       switch (s.headlight) {
         case "round": {
           const p = aim(s.xF - 0.05, build.noseTopY - 0.02, side * s.W * 0.34, new THREE.Vector3(-1, -0.45, 0));

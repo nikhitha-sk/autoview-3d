@@ -34,6 +34,12 @@ export function stepPaint(m: THREE.MeshPhysicalMaterial, target: THREE.Color, fi
   m.iridescence = THREE.MathUtils.lerp(m.iridescence, f.iridescence, k);
 }
 
+/** Glass is nearly opaque outside and almost clear from the driver's seat. */
+export function setGlassMode(m: THREE.MeshPhysicalMaterial, interior: boolean, exterior = 0.93) {
+  m.opacity = interior ? 0.1 : exterior;
+  m.needsUpdate = true;
+}
+
 export function makeGlass() {
   return new THREE.MeshPhysicalMaterial({
     color: new THREE.Color("#05070a"),

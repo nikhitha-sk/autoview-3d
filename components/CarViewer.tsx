@@ -320,7 +320,14 @@ function Rig({
     };
   }, [onInteract]);
 
+  const camera = useThree((st) => st.camera) as THREE.PerspectiveCamera;
   useFrame((_, dt) => {
+    // telephoto outside (product-photo look), wide inside the cabin
+    const targetFov = mode === "exterior" ? 32 : 70;
+    if (Math.abs(camera.fov - targetFov) > 0.05) {
+      camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov, 1 - Math.exp(-dt * 5));
+      camera.updateProjectionMatrix();
+    }
     const c = ref.current;
     if (!c || !autoRotate || mode !== "exterior" || busy.current) return;
     c.rotate(Math.min(dt, 0.05) * 0.16, 0, false);

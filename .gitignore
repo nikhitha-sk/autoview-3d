@@ -46,3 +46,7 @@ next-env.d.ts
 # keys
 .env*
 !.env.example
+
+# Cloudflare (OpenNext) build output
+.open-next
+.wrangler

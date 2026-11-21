@@ -465,10 +465,13 @@
       { "name": "Magma Grey", "hex": "#55595e", "finish": "metallic" },
       { "name": "Splendid Silver", "hex": "#b5b8bc", "finish": "metallic" }
     ],
+    "model3d": "/models/maruti-swift.glb",
+    "modelCredit": { "title": "Suzuki Swift", "author": "Casacade Models", "url": "https://sketchfab.com/models/218c3c0c6afd4d0eb343bd50d8868fd0", "license": "CC BY 4.0" },
+    "paintMaterial": "Pearl_Ablaze_Red$",
     "interiorColor": "#1f1f22",
     "thumbnail": "/cars/maruti-swift.webp",
     "shape": { "archetype": "hatch", "pillarsBlack": true },
-    "tags": ["Efficient", "City", "Made in India"]
+    "tags": ["Efficient", "City", "Made in India", "Real model"]
   },
   {
     "id": "tata-sierra",
@@ -654,10 +657,12 @@
       { "name": "Meteoroid Grey", "hex": "#4a4d52", "finish": "metallic" },
       { "name": "Obsidian Blue", "hex": "#1b2638", "finish": "pearl" }
     ],
+    "model3d": "/models/honda-city.glb",
+    "modelCredit": { "title": "Honda City RS", "author": "3DHA", "url": "https://sketchfab.com/models/1d5a7dc0b3674e779bf88afdd2f4fd46", "license": "CC BY 4.0" },
     "interiorColor": "#c9bfae",
     "thumbnail": "/cars/honda-city.webp",
     "shape": { "archetype": "sedan", "grille": "wide", "headlight": "strip", "tweak": { "cX": 0.81, "roofRearX": 0.67, "aX": 0.33 } },
-    "tags": ["Family", "Hybrid", "Made in India"]
+    "tags": ["Family", "Hybrid", "Made in India", "Real model"]
   },
   {
     "id": "maruti-brezza",
@@ -876,10 +881,12 @@
       { "name": "Typhoon Silver", "hex": "#9fa4a9", "finish": "metallic" },
       { "name": "Amazon Grey", "hex": "#5a5e5a", "finish": "metallic" }
     ],
+    "model3d": "/models/hyundai-i20.glb",
+    "modelCredit": { "title": "2020 Hyundai i20 N- Line", "author": "@ShreyanshChaurasia_12", "url": "https://sketchfab.com/models/6c267be59fb94253bff935616eddcc99", "license": "CC BY 4.0" },
     "interiorColor": "#2a2c31",
     "thumbnail": "/cars/hyundai-i20.webp",
     "shape": { "archetype": "hatch", "grille": "wide", "headlight": "sharp", "taillight": "bar", "pillarsBlack": true, "sunroof": true, "tweak": { "roofRearX": 0.86, "cX": 0.96, "rearCurve": 1.2 } },
-    "tags": ["Family", "Made in India"]
+    "tags": ["Family", "Made in India", "Real model"]
   },
   {
     "id": "kia-seltos",

@@ -39,6 +39,12 @@ interface Job {
   error?: string;
 }
 
+/** A showroom car returned instead of a generated model (same car, or a same-brand look-alike). */
+interface ShowroomMatch {
+  kind: "exact" | "similar";
+  car: Car;
+}
+
 type Phase = "idle" | "uploading" | "generating" | "done" | "error";
 
 const PROVIDER_LABEL = { tripo: "Tripo3D", meshy: "Meshy", demo: "Demo mode" } as const;
@@ -54,6 +60,7 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
   const [error, setError] = useState<string | null>(null);
   const [recognition, setRecognition] = useState<Recognition | null>(null);
   const [job, setJob] = useState<Job | null>(null);
+  const [showroom, setShowroom] = useState<ShowroomMatch | null>(null);
   const [startedAt, setStartedAt] = useState<number>(0);
   const [now, setNow] = useState<number>(0);
   const [dragging, setDragging] = useState(false);
@@ -85,6 +92,7 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
     setError(null);
     setRecognition(null);
     setJob(null);
+    setShowroom(null);
   }, [preview]);
 
   const accept = useCallback(
@@ -98,6 +106,7 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
       setPreview(URL.createObjectURL(f));
       setPhase("idle");
       setJob(null);
+      setShowroom(null);
       setRecognition(null);
       try {
         setPaint(await dominantPaint(f));
@@ -145,6 +154,7 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
     if (!file) return;
     setPhase("uploading");
     setError(null);
+    setShowroom(null);
     setStartedAt(Date.now());
     setNow(Date.now());
     const body = new FormData();
@@ -156,6 +166,11 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
       const j = await res.json();
       if (j.recognition) setRecognition(j.recognition);
       if (!res.ok) throw new Error(j.error ?? "Upload failed");
+      if (j.showroom) {
+        // already in the showroom (or a close sibling is): show its real model, no generation needed
+        setShowroom(j.showroom);
+        return setPhase("done");
+      }
       setJob({ state: "queued", progress: 0, stage: "Queued on the GPU" });
       setPhase("generating");
       poll(j.id);
@@ -167,7 +182,7 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
 
   const busy = phase === "uploading" || phase === "generating";
   const elapsed = Math.max(0, Math.round((now - startedAt) / 1000));
-  const matched = recognition?.match ? catalogue.find((c) => c.id === recognition.match) : undefined;
+  const matched = showroom?.car ?? (recognition?.match ? catalogue.find((c) => c.id === recognition.match) : undefined);
   const resultCar = job?.demo ? demoCar(job.demo.archetype, job.demo.color) : undefined;
 
   const steps = [
@@ -178,7 +193,7 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
       active: phase === "uploading",
       skipped: caps ? !caps.recognition : false,
     },
-    { label: "Reconstruct", done: phase === "done", active: phase === "generating" },
+    { label: showroom ? "Showroom match" : "Reconstruct", done: phase === "done", active: phase === "generating" },
     { label: "Ready", done: phase === "done", active: false },
   ];
 
@@ -315,7 +330,37 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
       {/* ---------------- Output column ---------------- */}
       <div className="flex flex-col gap-5 lg:col-span-7">
         <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] border border-line bg-surface sm:aspect-[16/11]">
-          {phase === "done" && (job?.modelUrl || resultCar) ? (
+          {phase === "done" && showroom ? (
+            <>
+              <ViewerLazy
+                className="absolute inset-0"
+                car={showroom.car}
+                paint={{ name: "From your photo", hex: paint, finish: "metallic" }}
+                theme={theme}
+                autoRotate
+              />
+              <div className="pointer-events-none absolute left-4 top-4 flex flex-wrap gap-2">
+                <span className="glass rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em]">
+                  {showroom.kind === "exact" ? "Showroom model" : `Closest showroom car · ${showroom.car.brand} ${showroom.car.name}`}
+                </span>
+              </div>
+              <div className="absolute bottom-4 right-4 flex gap-2">
+                <Link
+                  href={`/car/${showroom.car.id}`}
+                  className="glass inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold hover:text-accent"
+                >
+                  Open in showroom <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="glass inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold hover:text-accent"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" /> New photo
+                </button>
+              </div>
+            </>
+          ) : phase === "done" && (job?.modelUrl || resultCar) ? (
             <>
               <ViewerLazy
                 className="absolute inset-0"
@@ -419,7 +464,9 @@ export default function UploadStudio({ catalogue }: { catalogue: Pick<Car, "id" 
                 className="group mt-5 flex items-center justify-between rounded-2xl border border-line bg-bg p-4 transition hover:border-accent"
               >
                 <span>
-                  <span className="eyebrow block !text-[10px]">In our showroom</span>
+                  <span className="eyebrow block !text-[10px]">
+                    {showroom?.kind === "similar" ? "Closest car in our showroom" : "In our showroom"}
+                  </span>
                   <span className="mt-1 block font-semibold">
                     {matched.brand} {matched.name} — full specs, interior &amp; paints
                   </span>

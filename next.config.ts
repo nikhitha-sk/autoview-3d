@@ -2,8 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
-  cacheComponents: true,
-  partialPrefetching: true,
+  // cacheComponents / partialPrefetching are off: OpenNext on Cloudflare doesn't fully support them yet
   turbopack: {
     rules: {
       "*.css": {

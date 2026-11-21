@@ -9,8 +9,6 @@ export function generateStaticParams() {
 export const metadata = { robots: { index: false } };
 
 /** Chrome-less render target used by scripts/render-thumbnails.mjs. */
-export const instant = false;
-
 export default async function StudioPage({ params }: PageProps<"/studio/[id]">) {
   const { id } = await params;
   const car = getCar(id);

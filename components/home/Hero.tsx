@@ -32,6 +32,7 @@ export default function Hero({ featured }: { featured: Car[] }) {
         wheelZoom={false}
         focalOffset={desktop ? [-1.5, 0.35, 0] : [0, 0.2, 0]}
         distanceScale={desktop ? 1.3 : 1}
+        exposure={0.72}
         className="absolute inset-x-0 top-14 h-[46svh] lg:inset-0 lg:h-auto"
       />
 

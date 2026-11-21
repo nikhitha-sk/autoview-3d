@@ -39,6 +39,8 @@ export interface CarViewerProps {
   distanceScale?: number;
   /** Mouse-wheel dolly. Disable where the page must keep scrolling (hero). */
   wheelZoom?: boolean;
+  /** Tone-mapping exposure (1 = default); the home hero dims it so the turntable car isn't washed out. */
+  exposure?: number;
   onInteract?: () => void;
 }
 
@@ -76,6 +78,7 @@ export default function CarViewer({
   showLoader = true,
   wheelZoom = true,
   distanceScale = 1,
+  exposure = 1,
   onInteract,
 }: CarViewerProps) {
   // This component only ever renders on the client (loaded with ssr: false).
@@ -99,6 +102,9 @@ export default function CarViewer({
         dpr={dpr}
         camera={{ fov: 32, near: 0.03, far: 120, position: [L * 2.2, H * 1.6 + 1.2, L * 2.6] }}
         gl={{ antialias: true, alpha: bare, preserveDrawingBuffer: bare }}
+        onCreated={({ gl }) => {
+          gl.toneMappingExposure = exposure;
+        }}
         style={{ pointerEvents: interactive ? "auto" : "none" }}
       >
         <PerformanceMonitor onDecline={() => setDeclined(true)} />

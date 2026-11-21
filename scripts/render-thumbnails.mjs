@@ -15,7 +15,9 @@ const browser = await chromium.launch({
 });
 const page = await browser.newPage({ viewport: { width: 1280, height: 760 }, deviceScaleFactor: 1.5 });
 for (const car of cars) {
-  await page.goto(`${base}/studio/${car.id}?bare=1&view=hero`, { waitUntil: "networkidle" });
+  // glossy hero models (e.g. the Ferrari) catch the overhead softbox; set "thumbExposure" on a car to tame it
+  const exposure = car.thumbExposure ?? 1;
+  await page.goto(`${base}/studio/${car.id}?bare=1&view=hero&exposure=${exposure}`, { waitUntil: "networkidle" });
   await page.waitForTimeout(4500);
   const png = await page.screenshot({ omitBackground: true });
   const out = `public/cars/${car.id}.webp`;

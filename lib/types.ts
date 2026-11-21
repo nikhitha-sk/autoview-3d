@@ -100,6 +100,8 @@ export interface Car {
   modelRotationY?: number;
   /** Pitch applied before fitting, for models exported Z-up (e.g. -1.5708). */
   modelRotationX?: number;
+  /** Exposure used when rendering the showroom card image (default 1). */
+  thumbExposure?: number;
   /** Regex (case-insensitive) naming the model's paint material(s), so the paint picker can recolour it. */
   paintMaterial?: string;
   interiorCamera?: InteriorCamera;

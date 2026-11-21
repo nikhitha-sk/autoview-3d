@@ -21,6 +21,7 @@ export default function StudioShot({ car }: { car: Car }) {
       bare: sp.get("bare") === "1",
       mode: (sp.get("mode") as ViewMode) ?? "exterior",
       paint: Number(sp.get("paint") ?? 0),
+      exposure: Number(sp.get("exposure") ?? 1),
     };
   }, [search]);
   useEffect(() => {
@@ -40,6 +41,7 @@ export default function StudioShot({ car }: { car: Car }) {
       paint={car.paints[opts.paint]}
       view={{ preset: opts.preset, nonce: 0 }}
       intro={false}
+      exposure={opts.exposure}
     />
   );
 }

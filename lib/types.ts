@@ -22,9 +22,10 @@ export type Archetype =
   | "compact-suv"
   | "hatch";
 
-export type GrilleStyle = "none" | "wide" | "kidney" | "slots" | "hex";
+export type GrilleStyle = "none" | "wide" | "kidney" | "slots" | "hex" | "bars";
 export type HeadlightStyle = "strip" | "round" | "split" | "sharp";
 export type TaillightStyle = "bar" | "pair" | "vertical";
+export type WheelStyle = "spoke" | "multi" | "aero" | "offroad";
 
 /** Optional per-car overrides for the procedural model generator. */
 export interface ShapeOverrides {
@@ -39,6 +40,17 @@ export interface ShapeOverrides {
   spareWheel?: boolean;
   exhausts?: number;
   spoiler?: boolean;
+  wheel?: WheelStyle;
+  /** Panoramic glass roof joining windscreen and rear glass. */
+  glassRoof?: boolean;
+  /** Blacked-out pillars ("floating roof"). */
+  pillarsBlack?: boolean;
+  sunroof?: boolean;
+  chromeTrim?: boolean;
+  roofRails?: boolean;
+  doors?: 2 | 4;
+  /** Per-car numeric overrides of the archetype preset (e.g. roofRearX, hoodY). */
+  tweak?: Record<string, number>;
 }
 
 export interface ModelCredit {

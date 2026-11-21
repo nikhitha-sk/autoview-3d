@@ -1,13 +1,13 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import sharp from "sharp";
 
 export const ogSize = { width: 1200, height: 630 };
 
-async function pngDataUrl(publicPath: string) {
-  const buf = await readFile(join(process.cwd(), "public", publicPath));
-  const png = await sharp(buf).resize({ width: 1100, withoutEnlargement: true }).png().toBuffer();
-  return `data:image/png;base64,${png.toString("base64")}`;
+/** next/og can't decode WebP: use the PNG copy made by scripts/og-images.mjs (/cars/x.webp -> /og/x.png). */
+async function pngDataUrl(thumbnail: string) {
+  const png = thumbnail.replace(/^\/cars\/(.+)\.webp$/, "og/$1.png");
+  const buf = await readFile(join(process.cwd(), "public", png));
+  return `data:image/png;base64,${buf.toString("base64")}`;
 }
 
 /** Shared social card: dark showroom, car render, wide uppercase title. */

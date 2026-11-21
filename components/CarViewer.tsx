@@ -115,6 +115,7 @@ export default function CarViewer({
                   rotationY={modelUrl ? 0 : car?.modelRotationY}
                   fitLength={!modelUrl && car ? car.dimensions.length / 1000 : undefined}
                   paintMatch={modelUrl ? undefined : car?.paintMaterial}
+                  rotationX={modelUrl ? 0 : car?.modelRotationX}
                   paint={paintValue}
                   interior={mode === "interior"}
                 />

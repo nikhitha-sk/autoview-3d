@@ -25,9 +25,11 @@ export interface GltfCarProps {
   fitLength?: number;
   /** Regex for the paint material names in this model (overrides the generic guess). */
   paintMatch?: string;
+  /** Pitch (radians) for models exported Z-up; applied before fitting. */
+  rotationX?: number;
 }
 
-export default function GltfCar({ url, paint, interior = false, normalize = false, rotationY = 0, fitLength, paintMatch }: GltfCarProps) {
+export default function GltfCar({ url, paint, interior = false, normalize = false, rotationY = 0, fitLength, paintMatch, rotationX = 0 }: GltfCarProps) {
   const { scene } = useGLTF(url, "/draco/");
   const paintMat = useMemo(() => (paint ? makePaint(paint.hex, paint.finish) : null), []); // eslint-disable-line react-hooks/exhaustive-deps
   const glassMat = useMemo(() => makeGlass(), []);
@@ -36,6 +38,7 @@ export default function GltfCar({ url, paint, interior = false, normalize = fals
   const model = useMemo(() => {
     const root = scene.clone(true);
     const paintRe = paintMatch ? new RegExp(paintMatch, "i") : null;
+    if (rotationX) root.rotation.x += rotationX;
     let repainted = false;
     root.traverse((o) => {
       const mesh = o as THREE.Mesh;
@@ -100,7 +103,7 @@ export default function GltfCar({ url, paint, interior = false, normalize = fals
       }
     }
     return { root, repainted };
-  }, [scene, paintMat, glassMat, normalize, fitLength, paintMatch]);
+  }, [scene, paintMat, glassMat, normalize, fitLength, paintMatch, rotationX]);
 
   useEffect(() => setGlassMode(glassMat, interior, 0.82), [interior, glassMat]);
 

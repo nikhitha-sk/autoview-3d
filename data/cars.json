@@ -32,7 +32,7 @@
     ],
     "interiorColor": "#2a1d17",
     "thumbnail": "/cars/porsche-911.webp",
-    "shape": { "archetype": "sports", "caliper": "#c1121f", "exhausts": 2 },
+    "shape": { "archetype": "sports", "caliper": "#c1121f", "exhausts": 2, "tweak": { "hoodY": 0.55, "beltRearY": 0.59, "deckY": 0.57, "glassWidth": 0.82, "glassTaper": 0.26, "aX": 0.335, "roofFrontX": 0.47, "roofRearX": 0.57, "roofArch": 0.075, "rearCurve": 2.6 } },
     "tags": ["Icon", "Rear-engine", "Sports car"]
   },
   {
@@ -185,7 +185,7 @@
     ],
     "interiorColor": "#2c2622",
     "thumbnail": "/cars/mercedes-g63.webp",
-    "shape": { "archetype": "boxy", "spareWheel": true, "caliper": "#c1121f", "exhausts": 4 },
+    "shape": { "archetype": "boxy", "grille": "bars", "spareWheel": true, "caliper": "#c1121f", "exhausts": 4 },
     "tags": ["V8", "Off-road", "Luxury"]
   },
   {
@@ -221,7 +221,7 @@
     ],
     "interiorColor": "#c9bba5",
     "thumbnail": "/cars/range-rover.webp",
-    "shape": { "archetype": "luxury-suv", "roofBlack": true },
+    "shape": { "archetype": "luxury-suv", "roofBlack": true, "pillarsBlack": true },
     "tags": ["Luxury", "AWD", "Flagship"]
   },
   {
@@ -257,7 +257,7 @@
     ],
     "interiorColor": "#1c1c1e",
     "thumbnail": "/cars/tesla-model-y.webp",
-    "shape": { "archetype": "crossover", "taillight": "bar", "headlight": "strip" },
+    "shape": { "archetype": "crossover", "taillight": "pair", "glassRoof": true },
     "tags": ["EV", "Tech", "Family"]
   },
   {
@@ -365,7 +365,7 @@
     ],
     "interiorColor": "#d9d3c7",
     "thumbnail": "/cars/hyundai-creta.webp",
-    "shape": { "archetype": "compact-suv", "taillight": "bar" },
+    "shape": { "archetype": "compact-suv", "taillight": "bar", "headlight": "sharp", "sunroof": true },
     "tags": ["Best-seller", "Family", "Made in India"]
   },
   {
@@ -401,7 +401,7 @@
     ],
     "interiorColor": "#3a3f47",
     "thumbnail": "/cars/tata-nexon-ev.webp",
-    "shape": { "archetype": "compact-suv", "grille": "none", "headlight": "split", "taillight": "bar" },
+    "shape": { "archetype": "compact-suv", "grille": "none", "headlight": "split", "taillight": "bar", "roofBlack": true, "sunroof": true, "tweak": { "roofRearX": 0.86, "cX": 0.965 } },
     "tags": ["EV", "Made in India", "Compact"]
   },
   {
@@ -437,7 +437,7 @@
     ],
     "interiorColor": "#1f1f22",
     "thumbnail": "/cars/maruti-swift.webp",
-    "shape": { "archetype": "hatch" },
+    "shape": { "archetype": "hatch", "pillarsBlack": true },
     "tags": ["Efficient", "City", "Made in India"]
   }
 ]

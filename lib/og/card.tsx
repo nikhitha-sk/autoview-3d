@@ -6,8 +6,21 @@ export const ogSize = { width: 1200, height: 630 };
 /** next/og can't decode WebP: use the PNG copy made by scripts/og-images.mjs (/cars/x.webp -> /og/x.png). */
 async function pngDataUrl(thumbnail: string) {
   const png = thumbnail.replace(/^\/cars\/(.+)\.webp$/, "og/$1.png");
-  const buf = await readFile(join(process.cwd(), "public", png));
+  const buf = await readPublic(png);
   return `data:image/png;base64,${buf.toString("base64")}`;
+}
+
+/** Read a file from /public: from disk under Node (build, dev), from the static-assets binding on Cloudflare Workers. */
+async function readPublic(path: string): Promise<Buffer> {
+  try {
+    return await readFile(join(process.cwd(), "public", path));
+  } catch {
+    const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+    const { env } = await getCloudflareContext({ async: true });
+    const res = await env.ASSETS!.fetch(new URL(`/${path}`, "https://assets.local"));
+    if (!res.ok) throw new Error(`asset ${path}: ${res.status}`);
+    return Buffer.from(await res.arrayBuffer());
+  }
 }
 
 /** Shared social card: dark showroom, car render, wide uppercase title. */

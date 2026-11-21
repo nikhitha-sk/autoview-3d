@@ -113,6 +113,7 @@ export default function CarViewer({
                   url={url}
                   normalize={normalize}
                   rotationY={modelUrl ? 0 : car?.modelRotationY}
+                  fitLength={!modelUrl && car ? car.dimensions.length / 1000 : undefined}
                   paint={paintValue}
                   interior={mode === "interior"}
                 />

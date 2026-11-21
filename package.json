@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "thumbnails": "node scripts/render-thumbnails.mjs http://localhost:3000",
-    "optimize:model": "npx @gltf-transform/cli optimize"
+    "optimize:model": "npx @gltf-transform/cli optimize",
+    "add-model": "node scripts/add-model.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

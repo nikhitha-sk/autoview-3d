@@ -35,21 +35,22 @@ export function stepPaint(m: THREE.MeshPhysicalMaterial, target: THREE.Color, fi
 }
 
 /** Glass is nearly opaque outside and almost clear from the driver's seat. */
-export function setGlassMode(m: THREE.MeshPhysicalMaterial, interior: boolean, exterior = 0.93) {
+export function setGlassMode(m: THREE.MeshPhysicalMaterial, interior: boolean, exterior = 0.88) {
   m.opacity = interior ? 0.1 : exterior;
   m.needsUpdate = true;
 }
 
 export function makeGlass() {
   return new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color("#05070a"),
-    metalness: 0.2,
-    roughness: 0.03,
-    clearcoat: 1,
+    color: new THREE.Color("#020304"),
+    metalness: 0,
+    roughness: 0.04,
+    clearcoat: 0.35,
     clearcoatRoughness: 0.02,
+    specularIntensity: 0.7,
     transparent: true,
-    opacity: 0.93,
-    envMapIntensity: 1.1,
+    opacity: 0.88,
+    envMapIntensity: 0.5,
     side: THREE.DoubleSide,
     depthWrite: false,
   });

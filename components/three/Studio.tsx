@@ -39,22 +39,31 @@ export default function Studio({
     <>
       {!bare && <color attach="background" args={[bg]} />}
       {!bare && <fog attach="fog" args={[bg, 9, 30]} />}
-      <hemisphereLight args={[dark ? "#9fb3c8" : "#ffffff", dark ? "#0b0b0b" : "#9a978f", dark ? 0.35 : 0.9]} />
-      <spotLight position={[0, 9, 0]} angle={0.55} penumbra={1} intensity={dark ? 90 : 60} color="#ffffff" />
-      <directionalLight position={[5, 8, 4]} intensity={dark ? 0.6 : 1.2} />
+      <hemisphereLight args={[dark ? "#b4c3d4" : "#ffffff", dark ? "#151515" : "#9a978f", dark ? 0.55 : 0.9]} />
+      <spotLight position={[0, 9, 0]} angle={0.6} penumbra={1} intensity={dark ? 120 : 70} color="#ffffff" />
+      <directionalLight position={[5, 8, 4]} intensity={dark ? 1 : 1.3} />
+      <directionalLight position={[-6, 4, -5]} intensity={dark ? 0.5 : 0.6} color="#dfe8ff" />
 
-      <Environment resolution={256} frames={1} environmentIntensity={dark ? 1 : 1.15}>
-        <color attach="background" args={[dark ? "#050506" : "#d9d8d4"]} />
+      <Environment resolution={512} frames={1} environmentIntensity={dark ? 1.15 : 1.2}>
+        <color attach="background" args={[dark ? "#0a0b0d" : "#d9d8d4"]} />
+        {/* overhead softbox: the long highlight that sweeps across bonnet, roof and boot */}
+        <Lightformer form="rect" intensity={dark ? 2.4 : 2.8} position={[0, 8, 0]} rotation-x={Math.PI / 2} scale={[12, 5, 1]} />
         {/* ceiling light strips */}
-        {[-6, -3, 0, 3, 6].map((z) => (
-          <Lightformer key={z} form="rect" intensity={dark ? 1.6 : 2.2} position={[0, 7, z]} rotation-x={Math.PI / 2} scale={[14, 0.32, 1]} />
+        {[-7, -3.5, 3.5, 7].map((z) => (
+          <Lightformer key={z} form="rect" intensity={dark ? 2.2 : 2.6} position={[0, 7, z]} rotation-x={Math.PI / 2} scale={[16, 0.35, 1]} />
         ))}
-        {/* big soft key */}
-        <Lightformer form="rect" intensity={dark ? 3 : 3.5} position={[-9, 2.5, 1]} rotation-y={Math.PI / 2} scale={[18, 3.5, 1]} />
-        <Lightformer form="rect" intensity={dark ? 1.4 : 2} position={[9, 2, -1]} rotation-y={-Math.PI / 2} scale={[18, 2.2, 1]} />
+        {/* big soft key + fill: horizontal bands that define the flanks */}
+        <Lightformer form="rect" intensity={dark ? 3.6 : 3.8} position={[-9, 2.2, 1]} rotation-y={Math.PI / 2} scale={[20, 2.6, 1]} />
+        <Lightformer form="rect" intensity={dark ? 2.2 : 2.4} position={[9, 1.8, -1]} rotation-y={-Math.PI / 2} scale={[20, 1.8, 1]} />
+        <Lightformer form="rect" intensity={dark ? 1.4 : 1.6} position={[9, 4.2, 2]} rotation-y={-Math.PI / 2} scale={[14, 0.4, 1]} />
+        <Lightformer form="rect" intensity={dark ? 1.4 : 1.6} position={[-9, 4.6, -2]} rotation-y={Math.PI / 2} scale={[14, 0.4, 1]} />
+        {/* front / back walls */}
+        <Lightformer form="rect" intensity={dark ? 1.6 : 2} position={[0, 2, 12]} scale={[22, 1.6, 1]} />
+        <Lightformer form="rect" intensity={dark ? 1.2 : 1.6} position={[0, 2.5, -12]} rotation-y={Math.PI} scale={[22, 1.4, 1]} />
         {/* rim ring */}
-        <Lightformer form="ring" color={accent} intensity={dark ? 3 : 1.5} position={[0, 3, -12]} scale={5} />
-        <Lightformer form="rect" intensity={dark ? 0.8 : 1.4} position={[0, 1, 12]} scale={[20, 1.2, 1]} />
+        <Lightformer form="ring" color={accent} intensity={dark ? 0.7 : 0.6} position={[0, 3, -11.5]} scale={5} />
+        {/* faint floor bounce so lower bodywork isn't pitch black */}
+        <Lightformer form="rect" intensity={dark ? 0.25 : 0.5} position={[0, -3, 0]} rotation-x={-Math.PI / 2} scale={[20, 20, 1]} />
       </Environment>
 
       {bare ? null : quality === "high" ? (

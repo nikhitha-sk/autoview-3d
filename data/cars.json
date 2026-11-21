@@ -30,10 +30,13 @@
       { "name": "Jet Black", "hex": "#0e0f11", "finish": "metallic" },
       { "name": "Carrara White", "hex": "#e9e7e1", "finish": "pearl" }
     ],
+    "model3d": "/models/porsche-911.glb",
+    "modelCredit": { "title": "2022 Porsche 911 GT3 Touring (992)", "author": "Ddiaz Design", "url": "https://sketchfab.com/models/a76364a3d50c4d78912a28250cb57be5", "license": "CC BY-NC 4.0-ShareAlike" },
+    "paintMaterial": "Paint_Material$",
     "interiorColor": "#2a1d17",
     "thumbnail": "/cars/porsche-911.webp",
     "shape": { "archetype": "sports", "caliper": "#c1121f", "exhausts": 2, "tweak": { "hoodY": 0.55, "beltRearY": 0.59, "deckY": 0.57, "glassWidth": 0.82, "glassTaper": 0.26, "aX": 0.335, "roofFrontX": 0.47, "roofRearX": 0.57, "roofArch": 0.075, "rearCurve": 2.6 } },
-    "tags": ["Icon", "Rear-engine", "Sports car"]
+    "tags": ["Icon", "Rear-engine", "Sports car", "Real model"]
   },
   {
     "id": "ferrari-458",
@@ -111,10 +114,13 @@
       { "name": "Blu Cepheus", "hex": "#0d2a5c", "finish": "metallic" },
       { "name": "Bianco Monocerus", "hex": "#f1f1ee", "finish": "gloss" }
     ],
+    "model3d": "/models/lamborghini-huracan.glb",
+    "modelCredit": { "title": "Lamborghini Huracan", "author": "Outlaw Games™", "url": "https://sketchfab.com/models/f4004ef10bd44845b3cece359e6a6b2e", "license": "CC BY-NC 4.0" },
+    "paintMaterial": "^Paint1Mtl$",
     "interiorColor": "#141414",
     "thumbnail": "/cars/lamborghini-huracan.webp",
     "shape": { "archetype": "supercar", "caliper": "#ffc20e", "exhausts": 2 },
-    "tags": ["V10", "AWD", "Supercar"]
+    "tags": ["V10", "AWD", "Supercar", "Real model"]
   },
   {
     "id": "bmw-m4",
@@ -147,10 +153,13 @@
       { "name": "Black Sapphire", "hex": "#0c0d10", "finish": "metallic" },
       { "name": "Alpine White", "hex": "#f0f0ee", "finish": "gloss" }
     ],
+    "model3d": "/models/bmw-m4.glb",
+    "modelCredit": { "title": "2026 BMW M4 Competition", "author": "Maroi Mister Let Me Think Official 3D Studio", "url": "https://sketchfab.com/models/dcfe4bf7b03948eca9e6d7de382bb9eb", "license": "CC BY 4.0" },
+    "paintMaterial": "^m4car_(body|hood|bodykit)1$",
     "interiorColor": "#c4501f",
     "thumbnail": "/cars/bmw-m4.webp",
     "shape": { "archetype": "coupe", "caliper": "#1f4fa3", "exhausts": 4 },
-    "tags": ["Inline-6", "AWD", "Track"]
+    "tags": ["Inline-6", "AWD", "Track", "Real model"]
   },
   {
     "id": "mercedes-g63",
@@ -183,10 +192,13 @@
       { "name": "Night Black Magno", "hex": "#1b1c1e", "finish": "matte" },
       { "name": "Hyacinth Red", "hex": "#5c0f1a", "finish": "metallic" }
     ],
+    "model3d": "/models/mercedes-g63.glb",
+    "modelCredit": { "title": "Mersedes-Benz G63 AMG", "author": "Black Snow", "url": "https://sketchfab.com/models/e5e2a1d2238048a1a494b3df983c16bb", "license": "CC BY 4.0" },
+    "paintMaterial": "^bodypaint$",
     "interiorColor": "#2c2622",
     "thumbnail": "/cars/mercedes-g63.webp",
     "shape": { "archetype": "boxy", "grille": "bars", "spareWheel": true, "caliper": "#c1121f", "exhausts": 4 },
-    "tags": ["V8", "Off-road", "Luxury"]
+    "tags": ["V8", "Off-road", "Luxury", "Real model"]
   },
   {
     "id": "range-rover",
@@ -219,10 +231,13 @@
       { "name": "Charente Grey", "hex": "#55595d", "finish": "metallic" },
       { "name": "Lantau Bronze", "hex": "#6b5543", "finish": "metallic" }
     ],
+    "model3d": "/models/range-rover.glb",
+    "modelCredit": { "title": "2022 Land Rover Range Rover", "author": "tonielpro520", "url": "https://sketchfab.com/models/fa4d79a5875e4733a71101e28a30e2e3", "license": "CC BY 4.0" },
+    "paintMaterial": "^Carro_Pintura$",
     "interiorColor": "#c9bba5",
     "thumbnail": "/cars/range-rover.webp",
     "shape": { "archetype": "luxury-suv", "roofBlack": true, "pillarsBlack": true },
-    "tags": ["Luxury", "AWD", "Flagship"]
+    "tags": ["Luxury", "AWD", "Flagship", "Real model"]
   },
   {
     "id": "tesla-model-y",
@@ -255,10 +270,14 @@
       { "name": "Diamond Black", "hex": "#0d0e10", "finish": "metallic" },
       { "name": "Glacier Blue", "hex": "#7b9bb8", "finish": "metallic" }
     ],
+    "model3d": "/models/tesla-model-y.glb",
+    "modelCredit": { "title": "2021 Tesla Model Y", "author": "tonielpro520", "url": "https://sketchfab.com/models/59e2ead369984b1a85c800ff6cf6789d", "license": "CC BY 4.0" },
+    "paintMaterial": "^Carro_Pintura$",
+    "interiorCamera": { "position": [0.384,  1.2,  -0.15], "target": [0.384,  1.12,  1.5] },
     "interiorColor": "#1c1c1e",
     "thumbnail": "/cars/tesla-model-y.webp",
     "shape": { "archetype": "crossover", "taillight": "pair", "glassRoof": true },
-    "tags": ["EV", "Tech", "Family"]
+    "tags": ["EV", "Tech", "Family", "Real model"]
   },
   {
     "id": "mahindra-thar-roxx",
@@ -291,10 +310,14 @@
       { "name": "Burnt Sienna", "hex": "#8a4b2c", "finish": "metallic" },
       { "name": "Stealth Black", "hex": "#111214", "finish": "metallic" }
     ],
+    "model3d": "/models/mahindra-thar-roxx.glb",
+    "modelRotationY": 1.5707963,
+    "modelCredit": { "title": "Mahindra - Thar Roxx", "author": "ansari_studios", "url": "https://sketchfab.com/models/f85210fe98774b7fab1199d8ee151ead", "license": "CC BY 4.0" },
+    "paintMaterial": "^Carpaint_Flakes",
     "interiorColor": "#e7e0d4",
     "thumbnail": "/cars/mahindra-thar-roxx.webp",
     "shape": { "archetype": "offroad", "spareWheel": true, "roofBlack": true },
-    "tags": ["4x4", "Made in India", "Off-road"]
+    "tags": ["4x4", "Made in India", "Off-road", "Real model"]
   },
   {
     "id": "toyota-fortuner",
@@ -327,10 +350,13 @@
       { "name": "Silver Metallic", "hex": "#b4b7bb", "finish": "metallic" },
       { "name": "Avant-Garde Bronze", "hex": "#7a5d45", "finish": "metallic" }
     ],
+    "model3d": "/models/toyota-fortuner.glb",
+    "modelCredit": { "title": "2020 Toyota Fortuner Legender", "author": "David_Holiday", "url": "https://sketchfab.com/models/3d9701bc2610466198f2cea996bd0fdc", "license": "CC BY 4.0" },
+    "paintMaterial": "^edge_color000255$",
     "interiorColor": "#1d1b1a",
     "thumbnail": "/cars/toyota-fortuner.webp",
     "shape": { "archetype": "suv" },
-    "tags": ["7 seats", "4x4", "Diesel"]
+    "tags": ["7 seats", "4x4", "Diesel", "Real model"]
   },
   {
     "id": "hyundai-creta",
@@ -363,10 +389,14 @@
       { "name": "Abyss Black", "hex": "#0f1013", "finish": "pearl" },
       { "name": "Ranger Khaki", "hex": "#7a7356", "finish": "matte" }
     ],
+    "model3d": "/models/hyundai-creta.glb",
+    "modelRotationY": 1.5707963,
+    "modelCredit": { "title": "Hyundai Creta", "author": "MattDoesBlender", "url": "https://sketchfab.com/models/67645b6f549441a786e2b4050dc0268b", "license": "CC BY 4.0" },
+    "paintMaterial": "carpaint",
     "interiorColor": "#d9d3c7",
     "thumbnail": "/cars/hyundai-creta.webp",
     "shape": { "archetype": "compact-suv", "taillight": "bar", "headlight": "sharp", "sunroof": true },
-    "tags": ["Best-seller", "Family", "Made in India"]
+    "tags": ["Best-seller", "Family", "Made in India", "Real model"]
   },
   {
     "id": "tata-nexon-ev",
@@ -506,10 +536,14 @@
       { "name": "Grandeur Grey", "hex": "#4b4f54", "finish": "metallic" },
       { "name": "Luxe Beige", "hex": "#8a7a63", "finish": "metallic" }
     ],
+    "model3d": "/models/maruti-baleno.glb",
+    "modelRotationY": 3.14159265,
+    "modelCredit": { "title": "2022 Maruti Suzuki Baleno", "author": "BHP3D", "url": "https://sketchfab.com/models/438c1b0c1a4e4732aa1a3cbb505d19e5", "license": "CC BY 4.0" },
+    "paintMaterial": "^primary$",
     "interiorColor": "#2b2d33",
     "thumbnail": "/cars/maruti-baleno.webp",
     "shape": { "archetype": "hatch", "grille": "wide", "headlight": "sharp", "taillight": "pair", "tweak": { "roofRearX": 0.85, "cX": 0.955, "rearCurve": 1.3, "noseRound": 0.28 } },
-    "tags": ["Best-seller", "Family", "Made in India"]
+    "tags": ["Best-seller", "Family", "Made in India", "Real model"]
   },
   {
     "id": "toyota-glanza",
@@ -541,10 +575,14 @@
       { "name": "Gaming Grey", "hex": "#55595e", "finish": "metallic" },
       { "name": "Enticing Silver", "hex": "#b3b7bc", "finish": "metallic" }
     ],
+    "model3d": "/models/maruti-baleno.glb",
+    "modelRotationY": 3.14159265,
+    "modelCredit": { "title": "2022 Maruti Suzuki Baleno", "author": "BHP3D", "url": "https://sketchfab.com/models/438c1b0c1a4e4732aa1a3cbb505d19e5", "license": "CC BY 4.0" },
+    "paintMaterial": "^primary$",
     "interiorColor": "#26282d",
     "thumbnail": "/cars/toyota-glanza.webp",
     "shape": { "archetype": "hatch", "grille": "hex", "headlight": "sharp", "taillight": "pair", "tweak": { "roofRearX": 0.85, "cX": 0.955, "rearCurve": 1.3, "noseRound": 0.28 } },
-    "tags": ["Family", "Made in India"]
+    "tags": ["Family", "Made in India", "Real model"]
   },
   {
     "id": "maruti-swift-dzire",
@@ -576,10 +614,14 @@
       { "name": "Arctic White", "hex": "#efefec", "finish": "gloss" },
       { "name": "Splendid Silver", "hex": "#a8adb2", "finish": "metallic" }
     ],
+    "model3d": "/models/maruti-swift-dzire.glb",
+    "modelRotationY": 3.14159265,
+    "modelCredit": { "title": "2022 Maruti Suzuki Swift Dzire", "author": "BHP3D", "url": "https://sketchfab.com/models/95451c00cb2d48778f67d798167e7237", "license": "CC BY 4.0" },
+    "paintMaterial": "^primary$",
     "interiorColor": "#d6cfc2",
     "thumbnail": "/cars/maruti-swift-dzire.webp",
     "shape": { "archetype": "sedan", "sunroof": true, "tweak": { "roofRearX": 0.67, "cX": 0.83, "aX": 0.3, "roofFrontX": 0.44 } },
-    "tags": ["Best-seller", "Family", "Made in India"]
+    "tags": ["Best-seller", "Family", "Made in India", "Real model"]
   },
   {
     "id": "honda-city",
@@ -647,10 +689,14 @@
       { "name": "Pearl Arctic White", "hex": "#efefec", "finish": "pearl" },
       { "name": "Magma Grey", "hex": "#4b4e53", "finish": "metallic" }
     ],
+    "model3d": "/models/maruti-brezza.glb",
+    "modelRotationY": 3.14159265,
+    "modelCredit": { "title": "2022 Maruti Suzuki Vitara Brezza", "author": "BHP3D", "url": "https://sketchfab.com/models/1a5cbddc8acb457e9d896d7345fd07d8", "license": "CC BY 4.0" },
+    "paintMaterial": "^primary$",
     "interiorColor": "#2a2c31",
     "thumbnail": "/cars/maruti-brezza.webp",
     "shape": { "archetype": "compact-suv", "headlight": "sharp", "taillight": "pair", "roofBlack": true, "sunroof": true, "tweak": { "roofRearX": 0.94, "cX": 0.985, "roofArch": 0.008, "bodyRound": 0.13 } },
-    "tags": ["Best-seller", "Family", "Made in India"]
+    "tags": ["Best-seller", "Family", "Made in India", "Real model"]
   },
   {
     "id": "maruti-fronx",
@@ -717,10 +763,14 @@
       { "name": "Splendid Silver", "hex": "#a8adb2", "finish": "metallic" },
       { "name": "Magma Grey", "hex": "#4b4e53", "finish": "metallic" }
     ],
+    "model3d": "/models/maruti-ertiga.glb",
+    "modelRotationY": 3.14159265,
+    "modelCredit": { "title": "2022 Suzuki Ertiga", "author": "BHP3D", "url": "https://sketchfab.com/models/4f14afac3ac44ec4a2fb153e18452f8b", "license": "CC BY 4.0" },
+    "paintMaterial": "^primary$",
     "interiorColor": "#cfc4b2",
     "thumbnail": "/cars/maruti-ertiga.webp",
     "shape": { "archetype": "mpv" },
-    "tags": ["Family", "7-seater", "Made in India"]
+    "tags": ["Family", "7-seater", "Made in India", "Real model"]
   },
   {
     "id": "toyota-innova-hycross",
@@ -752,10 +802,12 @@
       { "name": "Silver Metallic", "hex": "#a7abb0", "finish": "metallic" },
       { "name": "Avant Garde Bronze", "hex": "#6a5440", "finish": "metallic" }
     ],
+    "model3d": "/models/toyota-innova-hycross.glb",
+    "modelCredit": { "title": "Toyota Kijang Innova Zenix 2023 (highpoly)", "author": "3DShowroom", "url": "https://sketchfab.com/models/c8e1bbc9292b4e198dba839c32f02fa9", "license": "CC BY 4.0" },
     "interiorColor": "#3b302a",
     "thumbnail": "/cars/toyota-innova-hycross.webp",
     "shape": { "archetype": "mpv", "grille": "hex", "sunroof": true, "tweak": { "roofRearX": 0.92, "hoodY": 0.6, "noseY": 0.55 } },
-    "tags": ["Family", "7-seater", "Hybrid"]
+    "tags": ["Family", "7-seater", "Hybrid", "Real model"]
   },
   {
     "id": "hyundai-venue",
@@ -787,10 +839,12 @@
       { "name": "Denim Blue", "hex": "#2d4a73", "finish": "metallic" },
       { "name": "Abyss Black", "hex": "#0f1013", "finish": "pearl" }
     ],
+    "model3d": "/models/hyundai-venue.glb",
+    "modelCredit": { "title": "Hyundai Venue 2025", "author": "teenlin3", "url": "https://sketchfab.com/models/8c35967cadbd4a55a94aad9e743ce0f7", "license": "CC BY 4.0" },
     "interiorColor": "#2a2c31",
     "thumbnail": "/cars/hyundai-venue.webp",
     "shape": { "archetype": "compact-suv", "grille": "wide", "headlight": "split", "taillight": "bar", "sunroof": true, "tweak": { "roofRearX": 0.93, "bodyRound": 0.12, "noseRound": 0.12 } },
-    "tags": ["Family", "Made in India"]
+    "tags": ["Family", "Made in India", "Real model"]
   },
   {
     "id": "hyundai-i20",
@@ -857,10 +911,13 @@
       { "name": "Gravity Grey", "hex": "#4a4e53", "finish": "metallic" },
       { "name": "Aurora Black Pearl", "hex": "#111216", "finish": "pearl" }
     ],
+    "model3d": "/models/kia-seltos.glb",
+    "modelCredit": { "title": "2022 Kia Seltos EX", "author": "mvntyyy", "url": "https://sketchfab.com/models/f1d5c26452cf43acb9f154fc076097e5", "license": "CC BY 4.0" },
+    "paintMaterial": "^Paint_Color$",
     "interiorColor": "#222327",
     "thumbnail": "/cars/kia-seltos.webp",
     "shape": { "archetype": "compact-suv", "grille": "wide", "headlight": "strip", "taillight": "bar", "roofBlack": true, "sunroof": true, "tweak": { "roofRearX": 0.9, "rearCurve": 0.9 } },
-    "tags": ["Family", "Turbo"]
+    "tags": ["Family", "Turbo", "Real model"]
   },
   {
     "id": "kia-sonet",
@@ -892,10 +949,13 @@
       { "name": "Glacier White Pearl", "hex": "#efeee9", "finish": "pearl" },
       { "name": "Pewter Olive", "hex": "#59604f", "finish": "metallic" }
     ],
+    "model3d": "/models/kia-sonet.glb",
+    "modelRotationY": 3.14159265,
+    "modelCredit": { "title": "Kia Sonet 2023", "author": "UZBEK 3D", "url": "https://sketchfab.com/models/2404c3131b7e439ebb41d0d664044f15", "license": "CC BY 4.0" },
     "interiorColor": "#26282c",
     "thumbnail": "/cars/kia-sonet.webp",
     "shape": { "archetype": "compact-suv", "grille": "wide", "headlight": "sharp", "taillight": "bar", "sunroof": true, "tweak": { "roofRearX": 0.93, "noseRound": 0.14 } },
-    "tags": ["Family"]
+    "tags": ["Family", "Real model"]
   },
   {
     "id": "tata-punch",
@@ -927,10 +987,13 @@
       { "name": "Daytona Grey", "hex": "#55595e", "finish": "metallic" },
       { "name": "Atomic Orange", "hex": "#d26a1f", "finish": "metallic" }
     ],
+    "model3d": "/models/tata-punch.glb",
+    "modelCredit": { "title": "Tata Punch", "author": "RahulD", "url": "https://sketchfab.com/models/1a85da7678ba4f708cfbee0d9303c5d7", "license": "CC BY 4.0" },
+    "paintMaterial": "^EXT_COLORBODY",
     "interiorColor": "#26282c",
     "thumbnail": "/cars/tata-punch.webp",
     "shape": { "archetype": "compact-suv", "grille": "hex", "headlight": "split", "taillight": "pair", "roofBlack": true, "tweak": { "roofRearX": 0.94, "clearance": 0.2, "wheelR": 0.34, "bodyRound": 0.15 } },
-    "tags": ["Safety", "Best-seller", "Made in India"]
+    "tags": ["Safety", "Best-seller", "Made in India", "Real model"]
   },
   {
     "id": "tata-harrier",
@@ -1032,10 +1095,15 @@
       { "name": "Dazzling Silver", "hex": "#a9adb2", "finish": "metallic" },
       { "name": "Red Rage", "hex": "#a2141c", "finish": "metallic" }
     ],
+    "model3d": "/models/mahindra-scorpio-n.glb",
+    "modelRotationY": 3.14159265,
+    "modelCredit": { "title": "2022 Mahindra Scorpio-N", "author": "BHP3D", "url": "https://sketchfab.com/models/538b10f2860f44e694dc3e9d3e223bf8", "license": "CC BY 4.0" },
+    "paintMaterial": "^primary$",
+    "interiorCamera": { "position": [-0.383,  1.5,  -0.05], "target": [-0.383,  1.42,  1.6] },
     "interiorColor": "#2e2a26",
     "thumbnail": "/cars/mahindra-scorpio-n.webp",
     "shape": { "archetype": "suv", "grille": "bars", "headlight": "sharp", "taillight": "vertical", "chromeTrim": true, "tweak": { "roofRearX": 0.975, "cX": 0.99, "roofArch": 0.008, "bodyRound": 0.1, "glassTaper": 0.08, "clearance": 0.24, "wheelR": 0.4, "noseRun": 0.015 } },
-    "tags": ["4x4", "7-seater", "Made in India"]
+    "tags": ["4x4", "7-seater", "Made in India", "Real model"]
   },
   {
     "id": "mg-hector",
@@ -1067,10 +1135,14 @@
       { "name": "Starry Black", "hex": "#121318", "finish": "metallic" },
       { "name": "Aurora Silver", "hex": "#b0b4b9", "finish": "metallic" }
     ],
+    "model3d": "/models/mg-hector.glb",
+    "modelRotationY": 1.5707963,
+    "modelCredit": { "title": "MG Hector", "author": "raobott", "url": "https://sketchfab.com/models/7e2c58a323824944883010cf228efd0b", "license": "CC BY 4.0" },
+    "paintMaterial": "CARPAINT_MAT$",
     "interiorColor": "#2a2724",
     "thumbnail": "/cars/mg-hector.webp",
     "shape": { "archetype": "suv", "grille": "wide", "headlight": "split", "taillight": "bar", "glassRoof": false, "sunroof": true, "tweak": { "roofRearX": 0.92, "bodyRound": 0.17, "hoodY": 0.62, "noseY": 0.58 } },
-    "tags": ["Family", "Connected"]
+    "tags": ["Family", "Connected", "Real model"]
   },
   {
     "id": "maruti-wagon-r",
@@ -1102,9 +1174,13 @@
       { "name": "Silky Silver", "hex": "#a8adb2", "finish": "metallic" },
       { "name": "Magma Grey", "hex": "#4b4e53", "finish": "metallic" }
     ],
+    "model3d": "/models/maruti-wagon-r.glb",
+    "modelRotationY": 3.14159265,
+    "modelCredit": { "title": "2013 Suzuki WagonR", "author": "BHP3D", "url": "https://sketchfab.com/models/71112627f42342099ff95b59e7532663", "license": "CC BY 4.0" },
+    "paintMaterial": "^primary$",
     "interiorColor": "#3a3a3d",
     "thumbnail": "/cars/maruti-wagon-r.webp",
     "shape": { "archetype": "hatch", "grille": "wide", "headlight": "sharp", "taillight": "vertical", "tweak": { "roofRearX": 0.95, "cX": 0.985, "rearCurve": 0.4, "roofArch": 0.01, "hoodY": 0.56, "noseY": 0.48, "aX": 0.24, "roofFrontX": 0.37, "glassTaper": 0.08, "bodyRound": 0.16 } },
-    "tags": ["Best-seller", "Budget", "Made in India"]
+    "tags": ["Best-seller", "Budget", "Made in India", "Real model"]
   }
 ]

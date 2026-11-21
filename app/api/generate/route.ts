@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { recogniseCar, type Recognition } from "@/lib/gemini";
+import { recogniseCar, showroomMatch, type Recognition } from "@/lib/gemini";
 import { ALLOWED_TYPES, MAX_UPLOAD_BYTES, activeProvider, rateLimited, startJob } from "@/lib/jobs";
 import { r2Enabled } from "@/lib/r2";
 import { archetypeForBody } from "@/lib/demoCar";
@@ -19,7 +19,8 @@ export function GET() {
 
 /**
  * POST /api/generate (multipart: image, [archetype], [color])
- * Validates the photo, optionally asks Gemini what car it is, then *starts* the
+ * Validates the photo and asks Gemini what car it is. If that car (or a same-brand,
+ * same-body sibling) is in the showroom, returns it straight away; otherwise *starts* the
  * image-to-3D job and returns immediately with a job id. The client polls
  * /api/status — we never wait for the 1–3 minute generation inside a request.
  */
@@ -50,6 +51,10 @@ export async function POST(req: NextRequest) {
   if (recognition && !recognition.isCar) {
     return NextResponse.json({ error: "We couldn't find a car in that photo — try a clearer side or 3/4 shot.", recognition }, { status: 422 });
   }
+
+  // The car (or a close sibling) is already in the showroom: show its real model instead of generating one.
+  const showroom = showroomMatch(recognition);
+  if (showroom) return NextResponse.json({ showroom, recognition });
 
   try {
     const hint = String(form.get("archetype") ?? "auto");

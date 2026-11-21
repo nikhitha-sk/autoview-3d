@@ -1,6 +1,6 @@
 import "server-only";
 import { getAllCars } from "./cars";
-import type { BodyType } from "./types";
+import type { BodyType, Car } from "./types";
 
 export interface Recognition {
   isCar: boolean;
@@ -68,4 +68,36 @@ export function matchCatalogue(make: string | null, model: string | null): strin
     if (nameHits > 0 && (!best || score > best.score)) best = { id: c.id, score };
   }
   return best && best.score >= 1.5 ? best.id : null;
+}
+
+export interface ShowroomMatch {
+  /** "exact": the same car is in the showroom; "similar": a showroom car of the same brand and body style. */
+  kind: "exact" | "similar";
+  car: Car;
+}
+
+// SUVs and crossovers are marketed interchangeably, so treat them as one family when looking for a look-alike
+const family = (b: BodyType | null | undefined) => (b === "Crossover" ? "SUV" : b);
+
+/**
+ * Pick a showroom car to show instead of generating a new model: the same car if we stock it,
+ * otherwise a real-model car of the same brand and body style. Null means "generate one".
+ */
+export function showroomMatch(r: Recognition | null): ShowroomMatch | null {
+  if (!r?.isCar) return null;
+  const cars = getAllCars();
+  const exact = r.match ? cars.find((c) => c.id === r.match) : undefined;
+  if (exact) return { kind: "exact", car: exact };
+  if (!r.make || !r.bodyType) return null;
+  const make = norm(r.make);
+  const model = norm(r.model ?? "");
+  const lookalikes = cars.filter(
+    (c) => c.model3d && norm(c.brand).split(" ").some((t) => make.includes(t)) && family(c.bodyType) === family(r.bodyType),
+  );
+  if (!lookalikes.length) return null;
+  // prefer a shared model-name token (e.g. "Innova Crysta" -> "Innova Hycross"), else an exact body type
+  const score = (c: Car) =>
+    norm(c.name).split(" ").filter((t) => t.length > 1 && model.includes(t)).length * 2 + (c.bodyType === r.bodyType ? 1 : 0);
+  const best = lookalikes.reduce((a, b) => (score(b) > score(a) ? b : a));
+  return { kind: "similar", car: best };
 }

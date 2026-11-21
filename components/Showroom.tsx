@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import CarCard from "./CarCard";
-import { bodyTypes, brands, filterCars, fuelFilters, priceBands, type CarQuery } from "@/lib/cars";
+import { bodyTypes, brands, filterCars, fuelFilters, priceBands, realFirst, type CarQuery } from "@/lib/cars";
 import type { Car } from "@/lib/types";
 
 type Sort = "featured" | "price-asc" | "price-desc" | "name";
@@ -66,7 +66,8 @@ export default function Showroom({ cars }: { cars: Car[] }) {
     if (sort === "price-asc") sorted.sort((a, b) => a.priceFrom - b.priceFrom);
     if (sort === "price-desc") sorted.sort((a, b) => b.priceTo - a.priceTo);
     if (sort === "name") sorted.sort((a, b) => `${a.brand} ${a.name}`.localeCompare(`${b.brand} ${b.name}`));
-    return sorted;
+    // whatever the sort or filter, realistic (real-model) cars stay on top
+    return realFirst(sorted);
   }, [cars, query, sort]);
 
   const activeCount = KEYS.filter((k) => query[k]).length;

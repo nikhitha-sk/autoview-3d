@@ -1,7 +1,11 @@
 import carsData from "@/data/cars.json";
 import type { BodyType, Car, Fuel } from "./types";
 
-export const cars = carsData as unknown as Car[];
+/** Cars with a real 3D model come first; procedural ones follow (stable, so data order is kept within each group). */
+export const hasRealModel = (c: Car) => Boolean(c.model3d);
+export const realFirst = (list: Car[]) => [...list].sort((a, b) => Number(hasRealModel(b)) - Number(hasRealModel(a)));
+
+export const cars = realFirst(carsData as unknown as Car[]);
 
 export function getAllCars(): Car[] {
   return cars;
@@ -50,6 +54,10 @@ export interface CarQuery {
 
 /** Shared by the showroom UI and /api/cars so filtering logic lives in one place. */
 export function filterCars(list: Car[], query: CarQuery): Car[] {
+  return realFirst(filterCarsUnordered(list, query));
+}
+
+function filterCarsUnordered(list: Car[], query: CarQuery): Car[] {
   const q = query.q?.trim().toLowerCase();
   const band = priceBands.find((b) => b.id === query.price);
   return list.filter((c) => {

@@ -1,4 +1,4 @@
-export type BodyType = "Coupe" | "Supercar" | "SUV" | "Sedan" | "Hatchback" | "Crossover" | "MPV";
+export type BodyType = "Coupe" | "Supercar" | "SUV" | "Sedan" | "Hatchback" | "Crossover" | "MPV" | "Pickup";
 
 export type Fuel = "Petrol" | "Diesel" | "Electric" | "Petrol / Diesel" | "Hybrid";
 

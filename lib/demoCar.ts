@@ -41,6 +41,7 @@ export function archetypeForBody(body?: BodyType | null): Archetype | null {
     case "Supercar":
       return "supercar";
     case "SUV":
+    case "Pickup":
       return "suv";
     case "Crossover":
       return "crossover";

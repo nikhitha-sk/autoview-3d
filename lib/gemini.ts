@@ -17,7 +17,7 @@ export interface Recognition {
 const PROMPT = `You are an automotive expert. Identify the car in this photo.
 Reply with JSON only, using this exact shape:
 {"isCar": boolean, "make": string|null, "model": string|null, "year": string|null,
- "bodyType": "Coupe"|"Supercar"|"SUV"|"Sedan"|"Hatchback"|"Crossover"|"MPV"|null,
+ "bodyType": "Coupe"|"Supercar"|"SUV"|"Sedan"|"Hatchback"|"Crossover"|"MPV"|"Pickup"|null,
  "color": string|null, "confidence": number between 0 and 1}
 If the photo does not clearly show a car, set isCar to false and the other fields to null.`;
 

@@ -98,6 +98,8 @@ export interface Car {
   modelCredit?: ModelCredit;
   /** Yaw applied to a .glb so its nose faces +Z. */
   modelRotationY?: number;
+  /** Regex (case-insensitive) naming the model's paint material(s), so the paint picker can recolour it. */
+  paintMaterial?: string;
   interiorCamera?: InteriorCamera;
   interior360?: string;
   thumbnail: string;

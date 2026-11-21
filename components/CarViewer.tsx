@@ -51,7 +51,7 @@ export function interiorFor(car?: Car): { position: THREE.Vector3; target: THREE
       target: new THREE.Vector3(...car.interiorCamera.target),
     };
   }
-  if (car.model3d) return null;
+  // catalogue models are scaled to real size and centred like the procedural cars, so the same driver eye point applies
   const v = driverView(resolveShape(car.dimensions, car.shape));
   const toWorld = ([x, y, z]: [number, number, number]) => new THREE.Vector3(-z, y, x);
   return { position: toWorld(v.eye), target: toWorld(v.target) };
@@ -114,6 +114,7 @@ export default function CarViewer({
                   normalize={normalize}
                   rotationY={modelUrl ? 0 : car?.modelRotationY}
                   fitLength={!modelUrl && car ? car.dimensions.length / 1000 : undefined}
+                  paintMatch={modelUrl ? undefined : car?.paintMaterial}
                   paint={paintValue}
                   interior={mode === "interior"}
                 />

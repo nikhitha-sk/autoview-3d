@@ -23,9 +23,11 @@ export interface GltfCarProps {
   rotationY?: number;
   /** Real-world length in metres: scale catalogue models to size and stand them on the floor. */
   fitLength?: number;
+  /** Regex for the paint material names in this model (overrides the generic guess). */
+  paintMatch?: string;
 }
 
-export default function GltfCar({ url, paint, interior = false, normalize = false, rotationY = 0, fitLength }: GltfCarProps) {
+export default function GltfCar({ url, paint, interior = false, normalize = false, rotationY = 0, fitLength, paintMatch }: GltfCarProps) {
   const { scene } = useGLTF(url, "/draco/");
   const paintMat = useMemo(() => (paint ? makePaint(paint.hex, paint.finish) : null), []); // eslint-disable-line react-hooks/exhaustive-deps
   const glassMat = useMemo(() => makeGlass(), []);
@@ -33,12 +35,15 @@ export default function GltfCar({ url, paint, interior = false, normalize = fals
 
   const model = useMemo(() => {
     const root = scene.clone(true);
+    const paintRe = paintMatch ? new RegExp(paintMatch, "i") : null;
     let repainted = false;
     root.traverse((o) => {
       const mesh = o as THREE.Mesh;
       if (!mesh.isMesh) return;
       const matName = (Array.isArray(mesh.material) ? mesh.material[0]?.name : mesh.material?.name) ?? "";
-      const paintLike = (PAINT_RE.test(mesh.name) || PAINT_RE.test(matName)) && !NOT_PAINT_RE.test(matName);
+      const paintLike = paintRe
+        ? paintRe.test(matName)
+        : (PAINT_RE.test(mesh.name) || PAINT_RE.test(matName)) && !NOT_PAINT_RE.test(matName);
       if (paintMat && paintLike) {
         mesh.material = paintMat;
         repainted = true;
@@ -48,12 +53,32 @@ export default function GltfCar({ url, paint, interior = false, normalize = fals
       }
     });
     if (fitLength && !normalize) {
+      // downloaded models sometimes ship ground planes / backdrops: hide anything far bigger than the car
+      root.updateMatrixWorld(true);
+      const parts: { mesh: THREE.Mesh; box: THREE.Box3; span: number }[] = [];
+      root.traverse((o) => {
+        const mesh = o as THREE.Mesh;
+        if (!mesh.isMesh) return;
+        const box = new THREE.Box3().setFromObject(mesh);
+        const sz = box.getSize(new THREE.Vector3());
+        parts.push({ mesh, box, span: Math.max(sz.x, sz.z) });
+      });
+      const spans = parts.map((p) => p.span).sort((a, b) => a - b);
+      const typical = spans[Math.floor(spans.length * 0.9)] ?? 1;
+      for (const p of parts) {
+        const sz = p.box.getSize(new THREE.Vector3());
+        const flat = sz.y < p.span * 0.01;
+        if (p.span > typical * 1.6 || (flat && p.span > typical * 0.9)) p.mesh.visible = false;
+      }
       // only touch models that aren't already metric, centred and grounded (keeps hand-tuned ones as-is)
-      const box = new THREE.Box3().setFromObject(root);
+      const box = new THREE.Box3();
+      for (const p of parts) if (p.mesh.visible) box.union(p.box);
       const size = box.getSize(new THREE.Vector3());
       const longest = Math.max(size.x, size.z, 1e-6);
       if (Math.abs(longest - fitLength) / fitLength > 0.04) root.scale.multiplyScalar(fitLength / longest);
-      const b2 = new THREE.Box3().setFromObject(root);
+      root.updateMatrixWorld(true);
+      const b2 = new THREE.Box3();
+      for (const p of parts) if (p.mesh.visible) b2.union(new THREE.Box3().setFromObject(p.mesh));
       const c = b2.getCenter(new THREE.Vector3());
       if (Math.abs(b2.min.y) > 0.02 || Math.hypot(c.x, c.z) > 0.05) root.position.sub(new THREE.Vector3(c.x, b2.min.y, c.z));
     }
@@ -75,7 +100,7 @@ export default function GltfCar({ url, paint, interior = false, normalize = fals
       }
     }
     return { root, repainted };
-  }, [scene, paintMat, glassMat, normalize, fitLength]);
+  }, [scene, paintMat, glassMat, normalize, fitLength, paintMatch]);
 
   useEffect(() => setGlassMode(glassMat, interior, 0.82), [interior, glassMat]);
 

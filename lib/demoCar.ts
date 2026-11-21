@@ -11,6 +11,8 @@ const DIMS: Record<Archetype, Car["dimensions"]> = {
   suv: { length: 4800, width: 1855, height: 1835, wheelbase: 2745 },
   "compact-suv": { length: 4330, width: 1790, height: 1635, wheelbase: 2610 },
   hatch: { length: 3860, width: 1735, height: 1520, wheelbase: 2450 },
+  sedan: { length: 4550, width: 1750, height: 1490, wheelbase: 2600 },
+  mpv: { length: 4400, width: 1740, height: 1690, wheelbase: 2740 },
 };
 
 export const ARCHETYPE_LABELS: Record<Archetype, string> = {
@@ -24,13 +26,18 @@ export const ARCHETYPE_LABELS: Record<Archetype, string> = {
   suv: "Full-size SUV",
   "compact-suv": "Compact SUV",
   hatch: "Hatchback",
+  sedan: "Sedan",
+  mpv: "MPV / people carrier",
 };
 
 export function archetypeForBody(body?: BodyType | null): Archetype | null {
   switch (body) {
     case "Coupe":
-    case "Sedan":
       return "coupe";
+    case "Sedan":
+      return "sedan";
+    case "MPV":
+      return "mpv";
     case "Supercar":
       return "supercar";
     case "SUV":

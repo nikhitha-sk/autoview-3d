@@ -1,4 +1,4 @@
-export type BodyType = "Coupe" | "Supercar" | "SUV" | "Sedan" | "Hatchback" | "Crossover";
+export type BodyType = "Coupe" | "Supercar" | "SUV" | "Sedan" | "Hatchback" | "Crossover" | "MPV";
 
 export type Fuel = "Petrol" | "Diesel" | "Electric" | "Petrol / Diesel" | "Hybrid";
 
@@ -20,7 +20,9 @@ export type Archetype =
   | "offroad"
   | "suv"
   | "compact-suv"
-  | "hatch";
+  | "hatch"
+  | "sedan"
+  | "mpv";
 
 export type GrilleStyle = "none" | "wide" | "kidney" | "slots" | "hex" | "bars";
 export type HeadlightStyle = "strip" | "round" | "split" | "sharp";

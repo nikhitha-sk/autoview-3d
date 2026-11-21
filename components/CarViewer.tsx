@@ -7,7 +7,7 @@ import * as THREE from "three";
 import ProceduralCar from "./three/ProceduralCar";
 import InteriorViewer from "./InteriorViewer";
 import GltfCar from "./three/GltfCar";
-import Studio, { type Quality, type StudioTheme } from "./three/Studio";
+import Studio, { narrowFactor, type Quality, type StudioTheme } from "./three/Studio";
 import { resolveShape, driverView } from "@/lib/carShapes";
 import type { Car, Paint } from "@/lib/types";
 
@@ -228,7 +228,7 @@ function Rig({
   const aspect = size.width / Math.max(1, size.height);
 
   const presets = useMemo(() => {
-    const D = Math.max(L, 3.6) * 1.55 * distanceScale * (aspect < 0.8 ? 1.7 : aspect < 1.3 ? 1.25 : 1);
+    const D = Math.max(L, 3.6) * 1.55 * distanceScale * narrowFactor(aspect);
     const ty = H * 0.42;
     const p: Record<ViewPreset, [number, number, number, number, number, number]> = {
       hero: [D * 0.66, H * 0.5 + 0.55, D * 0.76, 0, ty, 0],
@@ -294,7 +294,9 @@ function Rig({
     c.setLookAt(...p, animate);
   }, [mode, interior, view.preset, view.nonce, presets, intro]);
 
-  const [fx, fy, fz] = focalOffset ?? [0, 0, 0];
+  // the sideways shift makes room for desktop side panels; on portrait screens keep the car centred
+  const [ox, fy, fz] = focalOffset ?? [0, 0, 0];
+  const fx = aspect < 1 ? 0 : ox;
   useEffect(() => {
     const c = ref.current;
     if (!c) return;

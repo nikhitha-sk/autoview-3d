@@ -1,11 +1,17 @@
 "use client";
 
 import { useMemo } from "react";
+import { useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
 export type StudioTheme = "dark" | "light";
 export type Quality = "high" | "low";
+
+/** How far to pull the camera back on narrow (portrait) viewports so the whole car fits across. */
+export function narrowFactor(aspect: number) {
+  return THREE.MathUtils.clamp(1.4 / aspect, 1, 2.6);
+}
 
 export const STUDIO_BG: Record<StudioTheme, string> = {
   dark: "#08090b",
@@ -34,11 +40,14 @@ export default function Studio({
 }) {
   const bg = STUDIO_BG[theme];
   const dark = theme === "dark";
+  // the camera backs off on phones; push the fog back with it so the car doesn't fade out
+  const { size } = useThree();
+  const k = narrowFactor(size.width / Math.max(1, size.height));
 
   return (
     <>
       {!bare && <color attach="background" args={[bg]} />}
-      {!bare && <fog attach="fog" args={[bg, 9, 30]} />}
+      {!bare && <fog attach="fog" args={[bg, 9 * k, 30 * k]} />}
       <hemisphereLight args={[dark ? "#b4c3d4" : "#ffffff", dark ? "#151515" : "#9a978f", dark ? 0.55 : 0.9]} />
       <spotLight position={[0, 9, 0]} angle={0.6} penumbra={1} intensity={dark ? 120 : 70} color="#ffffff" />
       <directionalLight position={[5, 8, 4]} intensity={dark ? 1 : 1.3} />

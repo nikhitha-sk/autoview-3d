@@ -71,6 +71,7 @@
     ],
     "interiorColor": "#1a1a1a",
     "model3d": "/models/ferrari-458.glb",
+    "thumbExposure": 0.5,
     "modelRotationY": 3.14159265,
     "modelCredit": {
       "title": "Ferrari 458 Italia (Spider)",

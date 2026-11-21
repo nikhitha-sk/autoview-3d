@@ -23,8 +23,8 @@ export default function HomePage() {
             </>
           }
         >
-          Twelve icons, from India&apos;s favourite hatchback to Maranello&apos;s V8. Every one opens in a live 3D studio
-          — exterior and cabin.
+          {cars.length} cars, from India&apos;s favourite hatchbacks and SUVs to Maranello&apos;s V8. Every one opens in a live
+          3D studio — exterior and cabin.
         </SectionHeading>
         <div className="mt-12">
           <Showroom cars={cars} />
